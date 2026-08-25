@@ -1,0 +1,1954 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桥梁技术状况评定系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ── 明亮科技风配色 ── */
+  --bg:#f5f7fa;--bg2:#ffffff;--bg3:#eef1f6;--border:#dde2ec;
+  --ink:#2b7fff;--ink-dim:#8a96ad;
+  --accent:#2b7fff;--accent2:#1a6abf;--text:#2d3a52;--text-dim:#8a96ad;
+  --text-head:#1a2338;
+  --green:#1e8a4a;--yellow:#b07d10;--red:#c0392b;--seal:#c0392b;
+  /* 统一的页面级左右留白：header、面板标题、正文流、标签页、状态栏全部对齐到这一根竖线上 */
+  --gutter:24px;
+  /* header 下方第一行的统一行高：输入面板标题 / 进度条 / 标签页三者共用，保证下边框线对齐 */
+  --row-h:44px;
+  /* 兼容旧变量名 */
+  --bg-old:#f5f7fa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background-color:var(--bg);
+  color:var(--text);font-family:'Noto Sans SC',sans-serif;
+  font-weight:400;display:flex;flex-direction:column;overflow:hidden}
+body::before{content:none}
+
+/* header */
+header{flex-shrink:0;border-bottom:2px solid var(--ink);padding:13px var(--gutter);
+  display:flex;align-items:center;gap:14px;background:var(--bg2)}
+header .logo{width:30px;height:30px;background:var(--bg2);border:2px solid var(--ink);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+  font-family:'Noto Serif SC',serif;font-weight:700;color:var(--ink);position:relative}
+header h1{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;
+  color:var(--text-head);letter-spacing:3px}
+header .sub{margin-left:auto;font-size:10.5px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;
+  letter-spacing:.5px;text-transform:uppercase}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.dot.online{background:var(--green);box-shadow:0 0 4px var(--green)}
+
+
+/* pages */
+.page-content{display:none;flex:1;min-height:0;overflow:hidden}
+.page-content.active{display:flex}
+
+/* analyze layout */
+.analyze-layout{flex:1;display:flex;min-height:0;overflow:hidden}
+
+/* input panel */
+.input-panel{
+  width:420px;flex-shrink:0;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  background:var(--bg2);
+  overflow:hidden;
+}
+.panel-title{flex-shrink:0;height:var(--row-h);display:flex;align-items:center;padding:0 var(--gutter);font-size:10px;letter-spacing:3px;
+  color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace}
+.input-area{flex:1;display:flex;flex-direction:column;padding:16px var(--gutter);gap:12px;overflow-y:auto;min-height:0}
+textarea{
+  flex:1;min-height:160px;max-height:340px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:12px;color:var(--text);font-size:13px;line-height:1.8;
+  resize:none;outline:none;transition:border-color .2s;font-family:'Noto Sans SC',sans-serif}
+textarea:focus{border-color:var(--accent)}
+textarea::placeholder{color:var(--text-dim)}
+.model-row{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.btn-row{flex-shrink:0;display:flex;gap:8px}
+.btn-analyze{flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;
+  padding:12px;font-size:13px;font-weight:500;letter-spacing:1px;cursor:pointer;
+  transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-analyze:hover{opacity:.88}
+.btn-analyze:disabled{opacity:.4;cursor:not-allowed}
+.btn-stop{background:#fde8e8;color:var(--red);border:1px solid var(--red);
+  border-radius:8px;padding:12px;font-size:13px;cursor:pointer;display:none;
+  align-items:center;justify-content:center;gap:7px}
+.btn-stop:hover{background:#fad0d0}
+
+
+/* output panel */
+.output-panel{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+
+/* phase bar */
+.phase-bar{flex-shrink:0;height:var(--row-h);display:none;align-items:center;padding:0 var(--gutter);
+  background:var(--bg2);border-bottom:1px solid var(--border)}
+.phase-bar.visible{display:flex}
+.phase-step{display:flex;align-items:center;gap:7px;padding:9px 12px;
+  font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.phase-step .dot2{width:18px;height:18px;border-radius:50%;background:var(--bg3);
+  border:2px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:9px;flex-shrink:0;transition:all .3s}
+.phase-step.active .dot2{background:var(--accent);border-color:var(--accent);color:#fff;
+  animation:dotPulse 1.8s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(43,127,255,.18)}50%{box-shadow:0 0 0 7px rgba(43,127,255,.06)}}
+.phase-step.done .dot2{background:var(--green);border-color:var(--green);color:#fff}
+.phase-step.active{color:var(--accent)}.phase-step.done{color:var(--green)}
+.phase-sep{flex:1;height:1px;background:var(--border);min-width:16px;transition:background .5s ease}
+.phase-sep.done{background:var(--green)}
+
+/* reconnect */
+.reconnect-banner{flex-shrink:0;display:none;align-items:center;gap:10px;
+  padding:10px var(--gutter);background:#fff3cd;border-bottom:2px solid #f0b429;
+  font-size:13px;color:#7a4800}
+.reconnect-banner.visible{display:flex}
+.rbtn{background:#f0b429;color:#fff;border:none;border-radius:5px;
+  padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-left:auto}
+.rbtn2{background:#aaa;color:#fff;border:none;border-radius:5px;
+  padding:5px 10px;font-size:12px;cursor:pointer;margin-left:6px}
+
+/* tabs */
+.output-tabs{flex-shrink:0;height:var(--row-h);display:flex;align-items:stretch;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tab{display:flex;align-items:center;padding:0 var(--gutter);font-size:11px;color:var(--text-dim);cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .2s;
+  font-family:'JetBrains Mono',monospace;white-space:nowrap;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.tab-live::after{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);margin-left:5px;vertical-align:middle;
+  animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+
+.tab-pane{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden}
+.tab-pane.active{display:flex}
+
+/* status */
+.status-bar{flex-shrink:0;padding:8px var(--gutter);border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim);
+  font-family:'JetBrains Mono',monospace;background:var(--bg2)}
+.spinner{width:11px;height:11px;border:2px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;display:none}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.char-count{margin-left:auto;font-size:10px}
+
+/* empty states */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;color:var(--text-dim)}
+.empty-icon{font-size:40px;opacity:.25;transition:opacity .3s}
+.empty-icon.pulsing{animation:iconPulse 1.8s ease-in-out infinite}
+@keyframes iconPulse{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.4;transform:scale(1.06)}}
+.empty-state p{font-size:13px}
+.empty-state .skeleton-lines{width:220px;margin-top:4px}
+.skel-line{height:9px;border-radius:5px;background:linear-gradient(90deg,var(--bg3) 25%,var(--border) 37%,var(--bg3) 63%);
+  background-size:400% 100%;animation:skelShimmer 1.6s ease-in-out infinite;margin-bottom:8px}
+.skel-line:nth-child(2){width:80%}.skel-line:nth-child(3){width:60%}
+@keyframes skelShimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+
+/* smooth reveal for panes/blocks when they first appear */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* stream area */
+#streamArea{flex:1;overflow-y:auto;padding:20px var(--gutter);min-height:0}
+
+/* thinking block */
+.thinking-block{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  margin-bottom:14px;overflow:hidden;flex-shrink:0}
+.thinking-block-header{display:flex;align-items:center;gap:9px;padding:9px 14px;
+  cursor:pointer;user-select:none;transition:background .15s}
+.thinking-block-header:hover{background:var(--bg2)}
+.thinking-block-icon{font-size:11px;transition:transform .25s;color:var(--accent2)}
+.thinking-block-icon.open{transform:rotate(90deg)}
+.thinking-block-label{font-size:11px;font-family:'JetBrains Mono',monospace;
+  color:var(--accent2);letter-spacing:.5px;flex:1}
+.thinking-block-count{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.thinking-block-body{display:none;padding:12px 14px;border-top:1px solid var(--border);
+  font-size:12px;line-height:1.9;color:var(--text-dim);max-height:360px;overflow-y:auto;
+  white-space:pre-wrap;word-break:break-word}
+.thinking-block-body.open{display:block !important;animation:blockFadeIn .22s ease}
+@keyframes blockFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* reasoning */
+.reasoning-label{font-size:10px;letter-spacing:2px;color:var(--text-dim);
+  font-family:'JetBrains Mono',monospace;margin-bottom:10px;padding-bottom:8px;
+  border-bottom:1px solid var(--border)}
+.reasoning-text{font-size:13px;line-height:1.9;font-family:'Noto Sans SC',sans-serif;font-weight:400}
+.reasoning-text p{margin-bottom:10px}
+.reasoning-text h2{font-size:17px;color:var(--text-head);margin:18px 0 8px;font-weight:600}
+.reasoning-text h3{font-size:15px;color:var(--accent2);margin:14px 0 7px;font-weight:600}
+.reasoning-text h4{font-size:13px;color:var(--accent2);margin:10px 0 5px;font-weight:600}
+.reasoning-text b{color:var(--text-head);font-weight:600}
+.reasoning-text hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+.reasoning-text code{background:var(--bg3);padding:1px 5px;border-radius:3px;
+  font-family:'JetBrains Mono',monospace;font-size:11px}
+.reasoning-text pre{background:var(--bg3);padding:10px 14px;border-radius:6px;
+  overflow-x:auto;margin:8px 0}
+.reasoning-text pre code{background:none;padding:0}
+.reasoning-text table,.thinking-block-body table,.result-scroll table{border-collapse:collapse;width:100%;margin:10px 0;font-size:12px}
+.reasoning-text td,.reasoning-text th,.thinking-block-body td,.thinking-block-body th,.result-scroll td,.result-scroll th{border:1px solid var(--border);padding:5px 9px;vertical-align:top}
+.reasoning-text th,.thinking-block-body th,.result-scroll th{background:var(--bg3);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500}
+
+.stream-raw{white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.9;
+  font-family:'Noto Sans SC',sans-serif;font-weight:400}
+
+/* extract */
+.extract-header{flex-shrink:0;padding:8px var(--gutter);border-bottom:1px solid var(--border);
+  background:var(--bg2);display:flex;align-items:center;gap:8px}
+.extract-stream{flex:1;overflow-y:auto;padding:20px var(--gutter);font-size:12px;line-height:1.8;
+  font-family:'JetBrains Mono',monospace;color:var(--text-dim);
+  white-space:pre-wrap;word-break:break-word;min-height:0}
+.json-area-header{flex-shrink:0;padding:9px var(--gutter);border-bottom:1px solid var(--border);
+  background:var(--bg2);display:flex;align-items:center;gap:8px}
+.json-text{flex:1;overflow-y:auto;padding:20px var(--gutter);font-size:11.5px;line-height:1.6;
+  white-space:pre-wrap;font-family:'JetBrains Mono',monospace;
+  background:var(--bg);min-height:0}
+
+.result-scroll{flex:1;overflow-y:auto;padding:20px var(--gutter);min-height:0}
+/* 案例复现滚动区减少四周留白 */
+#fullviewContent.result-scroll{padding:20px var(--gutter)}
+
+
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.section-title{padding:7px 14px;font-size:10px;letter-spacing:1px;color:var(--accent2);font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;font-weight:500}
+.score-grid{display:flex;gap:10px;flex-wrap:wrap}
+.score-card{flex:1;min-width:120px;background:var(--bg2);border-radius:6px;padding:8px 12px;text-align:center;border:1px solid var(--border)}
+.score-card .label{font-size:10px;color:var(--text-dim);margin-bottom:2px}
+.score-card .val{font-size:20px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.score-card .grade{font-size:11px;color:var(--yellow);margin-top:1px;font-weight:500}
+.score-card.total{flex:2;background:#eef4ff;border-color:#cfe3ff}
+.score-card.total .val{font-size:24px;color:var(--green)}
+.score-card.grade-1,.score-card.grade-2{border-left:3px solid var(--green)}
+.score-card.grade-3{border-left:3px solid var(--yellow)}
+.score-card.grade-4,.score-card.grade-5{border-left:3px solid var(--red)}
+.data-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px}
+.data-table th{text-align:left;padding:5px 7px;font-size:10px;color:var(--text-dim);
+  border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:400;
+  background:var(--bg2);letter-spacing:.5px}
+.data-table td{padding:4px 7px;border-bottom:1px solid var(--border);line-height:1.4;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tbody tr:nth-child(even) td{background:rgba(20,30,60,.014)}
+.data-table tr:hover td{background:rgba(43,127,255,.055)}
+.data-table td.changed,.score-card .val.changed{animation:cellFlash 1s ease}
+@keyframes cellFlash{0%{background:rgba(43,127,255,.28)}100%{background:transparent}}
+
+
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:.3px}
+.badge.s1,.badge.grade-1{background:#e6f5ec;color:#1e6a3a}
+.badge.s2,.badge.grade-2{background:#e8f5e0;color:#3a6a10}
+.badge.s3,.badge.grade-3{background:#fff3e0;color:#a05800}
+.badge.s4,.badge.grade-4{background:#fde8e8;color:#b02020}
+.badge.s5,.badge.grade-5{background:#f5d0d0;color:#8b0000;font-weight:700}
+.badge.develop{background:#fdece3;color:#b8531f}
+.badge.slow{background:#fef9e0;color:#8a6000}
+.badge.stable{background:#eef1f6;color:#4a5568}
+.badge.repair{background:#e3f2f4;color:#0e7c86}
+.badge.flag-on{background:var(--ink);color:#fff;border:1px solid var(--ink)}
+.badge.flag-off{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
+.changed{animation:changeFlash .6s ease}
+@keyframes changeFlash{0%{background:transparent}30%{background:rgba(43,127,255,.15)}100%{background:transparent}}
+.defect-item{background:var(--bg2);border-radius:7px;padding:10px 13px;
+  font-size:13px;line-height:1.65;border-left:3px solid var(--accent);margin-bottom:8px;
+  box-shadow:0 1px 2px rgba(20,30,60,.04);transition:box-shadow .15s}
+.defect-item:hover{box-shadow:0 3px 8px rgba(20,30,60,.08)}
+.defect-item .cat{font-size:10px;color:var(--accent2);margin-bottom:3px;
+  font-family:'JetBrains Mono',monospace}
+.maint-num{min-width:20px;height:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%;box-shadow:0 2px 5px rgba(43,127,255,.3);
+  display:flex;align-items:center;justify-content:center;font-size:10px;
+  font-weight:600;color:#fff;margin-top:2px;flex-shrink:0}
+
+/* download */
+.dl-btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:6px;
+  padding:6px 13px;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s}
+.dl-btn:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 3px 8px rgba(20,30,60,.12)}
+.dl-btn.json{background:#e8f0fe;color:var(--accent2);border:1px solid var(--border)}
+
+
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ============ 案例复现 (full view) ============ */
+
+.fv-wrap{
+  --fv-red-light:#fde8e8; --fv-red-text:#b02020;
+  --fv-blue-light:#e8f0fe; --fv-blue-text:#1e3a8a;
+  --fv-yellow-light:#fffaf0; --fv-yellow-text:#5c4a1a;
+  /* 四层推理色：高饱和区分（蓝/翠绿/橙/紫），前置后置步骤用柔和灰 */
+  --spec:#4a7fd0; --spec-bg:#e7eefc;
+  --mech:#2e9b77; --mech-bg:#e2f4ec;
+  --opt:#d0872e; --opt-bg:#fdf1de;
+  --judge:#7d63c9; --judge-bg:#efebfc;
+  --none:#8a93a8; --none-bg:#eef0f5;
+  font-size:13px; color:var(--text); line-height:1.7;
+  max-width:none; margin:0;  /* 放开宽度限制，占满可用空间 */
+}
+
+
+/* section */
+.fv-wrap .section{max-width:none;margin:0;padding:16px 0;border:none;background:transparent}
+.fv-wrap .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+.fv-wrap .section-title{font-family:'Noto Serif SC',serif;font-weight:700;font-size:18px;color:var(--text-head);padding:0}
+.fv-wrap .section-desc{font-size:13px;color:var(--text-dim);margin-bottom:18px;max-width:640px}
+
+/* ═════ 概况卡：左侧评级色块 + 右侧详情（评定结果与统计量分层） ═════ */
+.fv-ov-card{display:flex;align-items:stretch;background:var(--bg2);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.fv-ov-score{flex-shrink:0;width:168px;padding:22px 14px;border-right:1px dashed var(--border);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;background:var(--bg2)}
+.fv-ov-score .lbl{font-size:9px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase}
+.fv-ov-score .grade{
+  font-size:34px;font-weight:700;font-family:'Noto Serif SC',serif;line-height:1;
+  color:var(--green);
+}
+.fv-ov-score .grade.grade-3{color:var(--yellow)}
+.fv-ov-score .grade.grade-4,.fv-ov-score .grade.grade-5{color:var(--red)}
+.fv-ov-score .grade.no-grade{color:var(--text-dim)}
+.fv-ov-score .dr{font-size:12px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:.3px}
+
+.fv-ov-body{flex:1;min-width:0;padding:14px 20px;display:flex;flex-direction:column;gap:10px}
+.fv-ov-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fv-ov-name{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:700;color:var(--text-head);letter-spacing:.3px}
+.fv-ov-meta{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.3px}
+
+/* 上/下/桥面系子评分：视觉权重高于纯统计量 */
+.fv-ov-subscores{display:flex;gap:8px;flex-wrap:wrap}
+.fv-ov-chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:2px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--border)}
+.fv-ov-chip .cl{font-size:11px;color:var(--text-dim)}
+.fv-ov-chip .cv{font-size:13px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace}
+.fv-ov-chip.grade-3 .cv{color:var(--yellow)}
+.fv-ov-chip.grade-4 .cv,.fv-ov-chip.grade-5 .cv{color:var(--red)}
+.fv-ov-chip.no-grade .cv{color:var(--text-dim)}
+/* 左侧色条标注等级，底色维持纸面灰，不再用彩色胶囊填色 */
+.fv-ov-chip.grade-1,.fv-ov-chip.grade-2{border-left-color:var(--green)}
+.fv-ov-chip.grade-3{border-left-color:var(--yellow)}
+.fv-ov-chip.grade-4,.fv-ov-chip.grade-5{border-left-color:var(--red)}
+
+/* 桥梁参数：弱化于子评分，虚线分隔 */
+.fv-ov-params{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px;color:var(--text-dim);padding-top:10px;border-top:1px dashed var(--border)}
+.fv-ov-params b{color:var(--text-head);font-weight:500}
+
+/* 提取统计量：最弱化，纯灰色小字，与"评定结果"明确区分 */
+.fv-ov-stats{font-size:11px;color:var(--text-dim);letter-spacing:.2px}
+.fv-ov-stats b{color:var(--text);font-weight:600}
+
+/* ═════ 病害概览卡：重点关注 / 标签 / 机理结论 统一容器 ═════ */
+.fv-defect-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.fv-defect-warn{padding:10px 16px;background:var(--fv-red-light);color:var(--fv-red-text);font-size:13px;line-height:1.6;border-left:4px solid var(--seal);font-weight:500}
+.fv-defect-tags{padding:11px 16px;display:flex;flex-wrap:wrap;gap:8px}
+.fv-defect-mech{padding:10px 16px;font-size:12px;color:var(--text-dim);line-height:1.6}
+.fv-defect-card>div+div{border-top:1px solid var(--border)}
+
+
+/* 病害标签：方角+左侧刻度线，读作"记录条目"而非可点按钮，与真正可交互的圆角按钮区分开 */
+.fv-wrap .fv-defect-tags{gap:0;flex-direction:column}
+.fv-wrap .fv-defect-tags > span{font-size:12px;padding:5px 4px 5px 12px;border-left:2px solid var(--border);
+  background:none;border-radius:0;color:var(--text);line-height:1.5;display:block}
+.fv-wrap .fv-defect-tags > span:nth-child(even){background:rgba(22,35,46,.02)}
+
+/* 响应式 */
+@media(max-width:860px){
+  .fv-ov-card{flex-direction:column}
+  .fv-ov-score{width:100%;border-right:none;border-bottom:1px solid var(--border);flex-direction:row;justify-content:center;gap:12px;padding:14px 16px}
+}
+
+/* flow */
+.fv-wrap .flow{display:flex;align-items:stretch;gap:0;margin:16px 0;flex-wrap:wrap}
+.fv-wrap .flow-node{flex:1;min-width:160px;background:var(--bg2);border:1px solid var(--border);
+  border-top:4px solid var(--border);border-radius:10px;padding:16px 18px;position:relative}
+.fv-wrap .flow-node .fname{font-size:12px;font-weight:700;color:var(--text-head);margin-bottom:3px}
+.fv-wrap .flow-node .fdesc{font-size:11px;color:var(--text-dim);line-height:1.5}
+.fv-wrap .flow-node.spec{border-top-color:var(--spec)}
+.fv-wrap .flow-node.mech{border-top-color:var(--mech)}
+.fv-wrap .flow-node.opt{border-top-color:var(--opt)}
+.fv-wrap .flow-node.judge{border-top-color:var(--judge)}
+.fv-wrap .flow-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);
+  font-size:20px;padding:0 12px;flex-shrink:0;opacity:.5}
+@media(max-width:700px){.fv-wrap .flow{flex-direction:column}.fv-wrap .flow-arrow{transform:rotate(90deg);padding:2px 0}}
+
+/* spine & step */
+.fv-wrap .spine{position:relative;padding-left:40px;margin-top:16px}
+.fv-wrap .spine::before{content:'';position:absolute;left:13px;top:8px;bottom:8px;width:3px;
+  background:linear-gradient(to bottom,var(--border) 60%,transparent)}
+.fv-wrap .step{position:relative;margin-bottom:16px;transition:opacity .25s ease,filter .25s ease}
+.fv-wrap .step:last-child{margin-bottom:0}
+.fv-wrap .step-dot{position:absolute;left:-40px;top:18px;width:28px;height:28px;border-radius:50%;
+  background:var(--bg2);border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--text-dim);z-index:2;
+  box-shadow:0 0 0 4px var(--bg)}
+.fv-wrap .step.open .step-dot{background:var(--bg3)}
+.fv-wrap .step-card{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--border);
+  border-radius:10px;overflow:hidden;transition:box-shadow .2s}
+.fv-wrap .step-card:hover{box-shadow:0 4px 16px rgba(30,40,70,.07)}
+.fv-wrap .step[data-layer="spec"] .step-dot{border-color:var(--spec);color:var(--spec)}
+.fv-wrap .step[data-layer="spec"] .step-card{border-left-color:var(--spec)}
+.fv-wrap .step[data-layer="mech"] .step-dot{border-color:var(--mech);color:var(--mech)}
+.fv-wrap .step[data-layer="mech"] .step-card{border-left-color:var(--mech)}
+.fv-wrap .step[data-layer="opt"] .step-dot{border-color:var(--opt);color:var(--opt)}
+.fv-wrap .step[data-layer="opt"] .step-card{border-left-color:var(--opt)}
+.fv-wrap .step[data-layer="judge"] .step-dot{border-color:var(--judge);color:var(--judge)}
+.fv-wrap .step[data-layer="judge"] .step-card{border-left-color:var(--judge)}
+.fv-wrap .step[data-layer="none"] .step-dot{border-color:var(--none);color:var(--none)}
+.fv-wrap .step[data-layer="none"] .step-card{border-left-color:var(--none)}
+/* 展开步骤：圆圈显示所属推理层的淡色背景，边框与数字保持层级深色，清晰可读 */
+.fv-wrap .step[data-layer="spec"].open .step-dot{background:var(--spec-bg)}
+.fv-wrap .step[data-layer="mech"].open .step-dot{background:var(--mech-bg)}
+.fv-wrap .step[data-layer="opt"].open .step-dot{background:var(--opt-bg)}
+.fv-wrap .step[data-layer="judge"].open .step-dot{background:var(--judge-bg)}
+.fv-wrap .step[data-layer="none"].open .step-dot{background:var(--none-bg)}
+.fv-wrap .step-header{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;user-select:none}
+.fv-wrap .step-header:hover{background:var(--bg3)}
+.fv-wrap .step-title{flex:1}
+.fv-wrap .step-title .stitle{font-size:14px;font-weight:700;color:var(--text-head)}
+.fv-wrap .step-title .slayer{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.fv-wrap .step-summary{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);white-space:nowrap}
+.fv-wrap .step-chevron{font-size:11px;color:var(--text-dim);transition:transform .2s;flex-shrink:0}
+.fv-wrap .step.open .step-chevron{transform:rotate(90deg)}
+.fv-wrap .step-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+.fv-wrap .step.open .step-body{display:block;padding-top:14px}
+.fv-wrap .step-body p{font-size:13px;color:var(--text);margin-bottom:10px}
+.fv-wrap .step-body p:last-child{margin-bottom:0}
+
+/* table */
+.fv-wrap .mtable{width:100%;border-collapse:collapse;font-size:12px;margin:14px 0;border:1px solid var(--border)}
+.fv-wrap .mtable th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-head);
+  font-weight:500;padding:9px 12px;background:var(--bg3);border-bottom:1px solid var(--border);
+  white-space:normal;word-break:break-word}
+.fv-wrap .mtable td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text-head);vertical-align:top;word-break:break-word}
+.fv-wrap .mtable tr:last-child td{border-bottom:none}
+.fv-wrap .mtable td.num{font-family:'JetBrains Mono',monospace;text-align:right}
+
+/* formula / note */
+.fv-wrap .formula-box{background:var(--bg3);border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--text);margin:8px 0;overflow-x:auto;white-space:nowrap}
+.fv-wrap .note{font-size:12px;color:var(--text-dim);border-left:2px solid var(--border);padding-left:10px;margin-top:8px}
+
+/* tagbar */
+
+/* highlight */
+.fv-wrap .highlight{display:flex;gap:10px;align-items:flex-start;background:var(--none-bg);
+  border:1px solid var(--none);border-radius:8px;padding:10px 14px;margin:10px 0}
+.fv-wrap .highlight .htag{flex-shrink:0;font-size:10px;font-family:'JetBrains Mono',monospace;
+  background:var(--none);color:#fff;border-radius:4px;padding:2px 7px;font-weight:600;white-space:nowrap;margin-top:1px}
+.fv-wrap .highlight .htext{font-size:13px;color:var(--text);line-height:1.6}
+/* 高亮框颜色跟随所属推理层，呼应左侧色条 */
+.fv-wrap .step[data-layer="spec"] .highlight{background:var(--spec-bg);border-color:var(--spec)}
+.fv-wrap .step[data-layer="spec"] .highlight .htag{background:var(--spec)}
+.fv-wrap .step[data-layer="mech"] .highlight{background:var(--mech-bg);border-color:var(--mech)}
+.fv-wrap .step[data-layer="mech"] .highlight .htag{background:var(--mech)}
+.fv-wrap .step[data-layer="opt"] .highlight{background:var(--opt-bg);border-color:var(--opt)}
+.fv-wrap .step[data-layer="opt"] .highlight .htag{background:var(--opt)}
+.fv-wrap .step[data-layer="judge"] .highlight{background:var(--judge-bg);border-color:var(--judge)}
+.fv-wrap .step[data-layer="judge"] .highlight .htag{background:var(--judge)}
+
+/* pill */
+.fv-wrap .pill{display:inline-block;font-size:11px;font-family:'JetBrains Mono',monospace;
+  border-radius:4px;padding:1px 7px;font-weight:600}
+.fv-wrap .pill.spec{background:var(--spec-bg);color:var(--spec)}
+.fv-wrap .pill.mech{background:var(--mech-bg);color:var(--mech)}
+.fv-wrap .pill.opt{background:var(--opt-bg);color:var(--opt)}
+.fv-wrap .pill.judge{background:var(--judge-bg);color:var(--judge)}
+.fv-wrap .pill.none{background:var(--none-bg);color:var(--none)}
+
+/* maintenance */
+.fv-wrap .fv-maint{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.7;margin-bottom:6px;color:var(--text)}
+.fv-wrap .fv-maint-num{min-width:18px;height:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;margin-top:2px;flex-shrink:0}
+.fv-wrap .fv-emg{margin:8px 0;padding:8px 12px;border-radius:6px;background:var(--fv-red-light);color:var(--fv-red-text);font-size:13px;line-height:1.6;border:1px solid #fecaca}
+.fv-wrap .fv-special{margin:8px 0;padding:8px 12px;border-radius:6px;background:var(--fv-blue-light);color:var(--fv-blue-text);font-size:13px;line-height:1.6;border:1px solid #bfdbfe}
+
+/* scores */
+.fv-wrap .score-grid{display:flex;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg2);margin:10px 0}
+.fv-wrap .score-cell{flex:1;padding:14px 16px;border-right:1px solid var(--border);text-align:center}
+.fv-wrap .score-cell:last-child{border-right:none}
+.fv-wrap .score-cell .sl{font-size:10px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.fv-wrap .score-cell .sv{font-family:'Noto Serif SC',serif;font-weight:700;font-size:20px;color:var(--text-head)}
+.fv-wrap .score-cell .sv .unit{font-size:12px;color:var(--text-dim);font-weight:400;margin-left:3px}
+
+/* 宽屏下结构内容占满，但纯文本段落限制行长保证阅读体验 */
+.fv-wrap .section-desc,
+.fv-wrap .step-body > p,
+.fv-wrap .step-body > .note,
+.fv-wrap .step-body > .highlight .htext{
+  max-width: 720px;
+}
+
+
+/* responsive */
+@media(max-width:640px){
+  .fv-wrap .flow{flex-direction:column}
+  .fv-wrap .flow-arrow{transform:rotate(90deg);padding:2px 0}
+  .fv-wrap .spine{padding-left:28px}
+  .fv-wrap .step-dot{left:-28px;width:20px;height:20px;font-size:10px}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">桥</div>
+  <h1 title="Bridge Condition Assessment System — BIDS-MC demo interface">桥梁技术状况评定系统</h1>
+  <div class="sub"><span class="dot online"></span>Bridge Condition Assessment System · JTG/T H21-2011</div>
+</header>
+
+
+<!-- ====== 新建评定 ====== -->
+<div class="page-content active" id="page-analyze">
+  <div class="analyze-layout">
+    <!-- LEFT -->
+    <div class="input-panel">
+      <div class="panel-title">输入数据 <span style="opacity:.55;font-weight:400">· Input Data</span></div>
+      <div class="input-area">
+        <textarea id="defectsInput" placeholder="在此处输入桥梁病害信息...&#10;Enter bridge defect data here..." title="Enter bridge defect inspection data here (free text, Chinese)"></textarea>
+        <div style="text-align:right;margin:4px 0 8px">
+          <a href="javascript:void(0)" onclick="loadExample()" title="Load a desensitized sample bridge inspection record"
+             style="font-size:11px;color:var(--accent);text-decoration:underline;cursor:pointer">加载示例 <span style="opacity:.6">· Load Example</span></a>
+        </div>
+        <div class="model-row" style="margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:var(--text-dim);white-space:nowrap" title="Your DeepSeek API key, used to call the reasoning model">API Key</span>
+            <input id="apiKeyInput" type="password" placeholder="填入你的 DeepSeek API Key"
+              title="Enter your DeepSeek API Key (also settable via the DEEPSEEK_API_KEY environment variable)"
+              style="flex:1;min-width:130px;background:var(--bg2);border:1px solid var(--border);
+                     border-radius:5px;padding:5px 7px;color:var(--text);font-size:11px;outline:none">
+          </div>
+        </div>
+        <div class="model-row">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--text-dim);white-space:nowrap" title="Reasoning model used for the analysis">推理模型 <span style="opacity:.55">· Reasoning Model</span></span>
+            <span style="font-size:12px;color:var(--text);font-family:JetBrains Mono,monospace">deepseek-v4-flash</span>
+            <span style="font-size:11px;color:var(--text-dim)" title="Extended thinking is enabled; reasoning effort fixed at high">思考强度：high <span style="opacity:.55">· Thinking Effort: high</span></span>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-analyze" id="analyzeBtn" onclick="startAnalysis()" title="Start the assessment analysis">&#x25B6; 开始评定分析 <span style="opacity:.7;font-weight:400;font-size:11px">· Start Assessment</span></button>
+          <button class="btn-stop" id="stopBtn" onclick="stopAnalysis()" title="Stop the running analysis">&#x25A0; 停止 <span style="opacity:.7;font-weight:400;font-size:11px">· Stop</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="output-panel">
+      <div class="phase-bar" id="phaseBar">
+        <div class="phase-step" id="phase1"><div class="dot2">1</div><span>模型推理</span></div>
+        <div class="phase-sep" id="phaseSep1"></div>
+        <div class="phase-step" id="phase2"><div class="dot2">2</div><span>完成</span></div>
+      </div>
+      <div class="reconnect-banner" id="reconnectBanner">
+        <span>&#x26A0;</span>
+        <span id="reconnectMsg">连接中断，生成已停止</span>
+        <button class="rbtn" id="retryBtn" onclick="retryAnalysis()">重新开始</button>
+        <button class="rbtn2" id="retryBtn2" onclick="dismissBanner()">忽略</button>
+      </div>
+      <div class="output-tabs">
+        <div class="tab active" id="tb-reasoning" onclick="toTab('reasoning')" title="Live model reasoning output">1 · 推理过程 <span style="opacity:.55">· Reasoning</span></div>
+        <div class="tab" id="tb-json" onclick="toTab('json')" title="Structured JSON extracted from the reasoning report">2 · JSON 数据 <span style="opacity:.55">· JSON Data</span></div>
+        <div class="tab" id="tb-fullview" onclick="toTab('fullview')" title="Full rendered case reproduction view">3 · 案例复现 <span style="opacity:.55">· Case Reproduction</span></div>
+      </div>
+
+      <div class="tab-pane active" id="pane-reasoning">
+        <div class="empty-state" id="emptyReasoning">
+          <div class="empty-icon">&#x1F9E0;</div><p>推理开始后实时显示</p>
+        </div>
+        <div id="streamArea" style="display:none">
+          <div class="thinking-block" id="thinkingBlock" style="display:none">
+            <div class="thinking-block-header" onclick="toggleThinking()">
+              <span class="thinking-block-icon" id="thinkingArrow">&#x25B6;</span>
+              <span class="thinking-block-label">&#x1F9E0; 思考过程</span>
+              <span class="thinking-block-count" id="thinkingCount">0 characters</span>
+            </div>
+            <div class="thinking-block-body" id="thinkingBody"></div>
+          </div>
+          <div id="reasoningWrap" style="display:none">
+            <div class="reasoning-label">REASONING OUTPUT</div>
+            <div class="stream-raw" id="reasoningRaw"></div>
+            <div class="reasoning-text" id="reasoningMD" style="display:none"></div>
+          </div>
+        </div>
+        <div id="extractBtn" style="display:none;padding:10px 16px;text-align:center">
+          <button id="extractBtnInner" onclick="extractData()" title="Extract structured JSON data from the reasoning report" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:1px">&#x2714; 提取数据并生成报告 <span style="opacity:.75;font-weight:400;font-size:11px">· Extract &amp; Generate</span></button>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="pane-json">
+        <div class="empty-state" id="emptyJson"><div class="empty-icon">{ }</div><p>提取完成后显示</p></div>
+        <div class="thinking-block" id="extractThinkBlock" style="display:none">
+          <div class="thinking-block-header" onclick="toggleExtractThink()">
+            <span class="thinking-block-icon" id="extractThinkArrow">&#x25B6;</span>
+            <span class="thinking-block-label">&#x1F9E0; 思考过程</span>
+            <span class="thinking-block-count" id="extractThinkCount">0 characters</span>
+          </div>
+          <div class="thinking-block-body" id="extractThinkBody"></div>
+        </div>
+        <div id="extractPane" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden">
+          <div class="extract-header">
+            <div class="spinner active" id="extractSpinner"></div>
+            <span>正在结构化提取...</span>
+          </div>
+          <div class="extract-stream" id="extractStream"></div>
+        </div>
+        <div id="jsonPane" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden">
+          <div class="json-area-header">
+            <span>结构化提取结果</span>
+            <button class="dl-btn json" onclick="downloadJSON()" title="Download the extracted result as a JSON file">&#x2B07; 下载 JSON</button>
+          </div>
+          <div class="json-text" id="jsonContent"></div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="pane-fullview">
+        <div class="empty-state" id="emptyFullview"><div class="empty-icon">&#x1F9ED;</div><p>分析完成后显示完整案例复现</p></div>
+        <div class="result-scroll" id="fullviewContent" style="display:none"></div>
+      </div>
+
+      <div class="status-bar">
+        <div class="spinner" id="spinner"></div>
+        <span id="statusMsg">Waiting for input</span>
+        <span class="char-count" id="charCount"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const EXAMPLE_CASE_TEXT = `## 检 测 数据
+
+> 说明：本案例数据用于展示 BIDS-MC 系统的输入格式与推理过程，具体路线编号、桩号位置及检测单位名称已做脱敏处理，桥梁技术特征、病害检测数据均保留原始记录。
+
+---
+
+## 1 桥梁概况
+
+蒋东岙桥建成于1996年。桥梁全长72.0m，纵向布置为：5×14.0m；桥梁全宽5.6m，横向布置为：0.3m（栏杆）+5.0m（行车道）+0.3m（栏杆）。
+
+| 项目 | 内容 |
+|---|---|
+| 桥梁全长 | 72.0m |
+| 桥面总宽 | 5.6m |
+| 车道宽度 | 5.0m |
+| 护栏高度 | 1.2m |
+| 上部结构 | 普通钢筋混凝土空心板，简支梁桥；板式橡胶支座 |
+| 下部结构 | 重力式墩台、扩大基础，均为浆砌块石 |
+| 桥面系 | 水泥混凝土铺装 |
+| 伸缩缝类型 | 简易伸缩缝 |
+| 栏杆材质 | 石质栏杆 |
+| 设计荷载 | 汽车-20级、挂车-100 |
+| 设计地震动峰值加速度 | 0.05或6度 |
+
+---
+
+## 2 桥梁检测评定历史
+
+| 评定时间 | 检测类别 | 桥梁技术状况评定结果 | 处治对策 | 下次检测时间 |
+|---|---|---|---|---|
+| 2019 | 定期检查 | 2类 | 小修 | / |
+| 2022 | 定期检查 | 2类 | 修复养护、预防养护 | / |
+
+---
+
+## 3 上次检查及维修概况
+
+| 项目 | 内容 |
+|---|---|
+| 上次检查时间 | 2022年04月 |
+| 上次检查单位 | 第三方专业检测机构（单位名称脱敏） |
+| 全桥技术状况评定等级 | 2类 |
+| 上部结构评定等级 | 2类 |
+| 下部结构评定等级 | 2类 |
+| 桥面系评定等级 | 2类 |
+| 桥梁维修处治概况 | 未收集到该桥梁维修加固相关资料 |
+
+**上次检查主要病害情况：**
+
+| 结构部位 | 病害描述 |
+|---|---|
+| 上部结构 | 空心板钢筋锈胀，共计12处，S总=0.36m²；破损露筋，共计3处，S总=0.17m²；铰缝渗水，共计2条，L总=13.0m；空心板竖向裂缝，共计79条，L总=36.1m，△=0.1-0.18mm；横向裂缝，共计115条，L总=115.0m，W=0.1-0.18mm |
+| 下部结构 | 桥墩墩帽麻面，共计3处，S总=0.49m²；桥墩墩身灰缝脱落，共计3处；台背水侵害，共计2处；河床冲刷变迁 |
+| 桥面系 | 桥面铺装破损，共计4处，S总=0.55m²；轻微磨损，共计5处；纵向裂缝，共计1条，L=6.0m；伸缩缝破损，共计1处，S=0.75m²；填料缺失，共计1处 |
+
+---
+
+## 4 桥梁部件划分及构件数量
+
+| 桥梁结构 | 桥梁部件 | 构件数量 | 备注 |
+|---|---|---|---|
+| 上部结构 | 上部承重构件 | 25 | 每跨5块空心板，共5跨 |
+| 上部结构 | 上部一般构件 | 20 | 每跨4道铰缝，共5跨 |
+| 上部结构 | 支座 | 100 | 每块板4个支座，共25块板 |
+| 下部结构 | 翼墙、耳墙 | 0 | 无此构件 |
+| 下部结构 | 锥坡、护坡 | 0 | 无此构件 |
+| 下部结构 | 桥墩 | 8 | 4个墩帽，4个墩身 |
+| 下部结构 | 桥台 | 6 | 2个台帽，2个台身，2个台后填料 |
+| 下部结构 | 墩台基础 | 6 | 6个扩大基础 |
+| 下部结构 | 河床 | 1 | 全桥按1个构件计算 |
+| 下部结构 | 调治构造物 | 1 | 全桥按1个构件计算 |
+| 桥面系 | 桥面铺装 | 5 | 每跨铺装按1个构件计算，共5跨 |
+| 桥面系 | 伸缩缝装置 | 0 | 无此构件 |
+| 桥面系 | 人行道 | 0 | 无此构件 |
+| 桥面系 | 栏杆、护栏 | 2 | 左右两侧各1道栏杆 |
+| 桥面系 | 排水系统 | 1 | 全桥按1个构件计算 |
+| 桥面系 | 照明、标志 | 0 | 无此构件 |
+
+---
+
+## 5 检测数据分析
+
+### 5.1 上部结构
+
+#### 5.1.1 上部承重构件
+
+上部承重构件为普通钢筋混凝土空心板，主要病害：空心板88条竖向裂缝，缝长共计51.1m，最大缝宽0.18mm；115条横向裂缝，缝长共计115.0m，最大缝宽0.18mm；3处破损露筋，面积共计0.17m²；16处锈胀露筋，面积共计0.42m²。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 第1跨 | 1-5#板 | 腹板，距0#台2.0～11.0m | 16条竖向裂缝，L总=8.0m，Wmax=0.18mm |
+| 第2跨 | 2-1#板 | 底板，距1#墩1.0～4.0m | 12条横向裂缝，L总=12.0m，Wmax=0.14mm |
+| 第2跨 | 2-3#板 | 底板，距1#墩2.0～10.0m | 26条横向裂缝，L总=26.0m，Wmax=0.18mm |
+| 第2跨 | 2-5#板 | 底板，距1#墩1.0～10.0m | 26条横向裂缝，L总=26.0m，Wmax=0.18mm |
+| 第2跨 | 2-5#板 | 腹板，距1#墩3.0～10.0m | 17条竖向裂缝，L总=5.1m，Wmax=0.16mm |
+| 第2跨 | 2-5#板 | 底板，距1#墩8.0m | 1处破损露筋，S=0.3×0.3m² |
+| 第2跨 | 2-5#板 | 腹板，距1#墩1.0～6.0m | 4处锈胀露筋，S总=0.1×0.6m² |
+| 第2跨 | 2-5#板 | 腹板，距1#墩1.5～2.0m | 2处锈胀露筋，S总=0.2×0.3m² |
+| 第4跨 | 4-1#板 | 底板，距3#墩4.0～6.0m | 12条横向裂缝，L总=12.0m，Wmax=0.18mm |
+| 第4跨 | 4-1#板 | 腹板，距3#墩2.0～10.0m | 18条竖向裂缝，L总=9.0m，Wmax=0.18mm |
+| 第4跨 | 4-1#板 | 底板，距3#墩8.0~9.0m | 2处破损露筋，S总=0.2×0.4m² |
+| 第4跨 | 4-5#板 | 腹板，距3#墩3.0～10.0m | 16条竖向裂缝，L总=8.0m，Wmax=0.18mm |
+| 第4跨 | 4-5#板 | 腹板，距3#墩11.5～12.8m | 3处锈胀露筋，S总=0.3×0.3m² |
+| 第5跨 | 5-1#板 | 腹板，距4#墩0.5～3.0m | 7处锈胀露筋，S总=0.7×0.3m² |
+| 第5跨 | 5-2#板 | 底板，距4#墩8.0～11.0m | 10条横向裂缝，L总=10.0m，Wmax=0.16mm |
+| 第5跨 | 5-4#板 | 底板，距4#墩2.0～5.0m | 8条横向裂缝，L总=8.0m，Wmax=0.16mm |
+| 第5跨 | 5-5#板 | 底板，距4#墩3.0～12.0m | 21条横向裂缝，L总=21.0m，Wmax=0.16mm，局部伴有渗水析白 |
+| 第5跨 | 5-5#板 | 腹板，距4#墩3.0～12.0m | 21条竖向裂缝，L总=21.0m，Wmax=0.18mm，局部伴有渗水析白 |
+
+#### 5.1.2 上部一般构件
+
+铰缝属于上部一般构件。主要病害：铰缝2处渗水，长度共计13.0m。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 第5跨 | 5-2#铰缝 | / | 渗水，L=8.0m |
+| 第5跨 | 5-3#铰缝 | / | 渗水，L=5.0m |
+
+#### 5.1.3 支座
+
+支座形式为板式橡胶支座，未见明显病害。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 全桥 | 支座 | / | 未见明显病害 |
+
+---
+
+### 5.2 下部结构
+
+#### 5.2.1 翼墙、耳墙
+
+无此构件。
+
+#### 5.2.2 锥坡、护坡
+
+无此构件。
+
+#### 5.2.3 桥墩
+
+桥墩形式为重力式墩，主要病害：墩帽3处麻面，面积共计0.49m²；墩身3处砌缝脱落，面积共计6.00m²。
+
+| 桥墩编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 1#墩 | 1#墩帽 | 1-1#墩帽，左侧端部 | 1处麻面，S=0.2×0.8m² |
+| 1#墩 | 1#墩帽 | 2-1#墩帽，距右0.5～2.5m | 1处麻面，S=0.6×0.3m² |
+| 2#墩 | 2#墩帽 | 2-2#墩帽，左侧端部 | 1处麻面，S=0.5×0.3m² |
+| 2#墩 | 2#墩身 | / | 1处砌缝脱落，S=1.0×2.0m² |
+| 3#墩 | 3#墩身 | / | 1处砌缝脱落，S=1.0×2.0m² |
+| 4#墩 | 4#墩身 | / | 1处砌缝脱落，S=1.0×2.0m² |
+
+#### 5.2.4 桥台
+
+桥台形式为重力式台，主要病害：台帽2处水侵害、长青苔。
+
+| 桥台编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 0#台 | 0#台帽 | / | 水侵害、长青苔 |
+| 5#台 | 5#台帽 | / | 水侵害、长青苔 |
+
+#### 5.2.5 墩台基础
+
+桥梁墩台基础为隐蔽工程无法检测，通过观察上下部结构未见因基础导致的异常状况。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 第4跨 | 4#墩基础 | / | 未见明显病害 |
+
+#### 5.2.6 河床
+
+河床未见明显病害。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 全桥 | 河床 | / | 未见明显病害 |
+
+#### 5.2.7 调治构造物
+
+调治构造物未见明显病害。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 全桥 | 调治构造物 | 上游拦水坝 | 未见明显病害 |
+
+---
+
+### 5.3 桥面系
+
+#### 5.3.1 桥面铺装
+
+桥面铺装为水泥混凝土，主要病害：铺装5处磨光、露骨，面积共计350.0m²；5处破损，面积共计1.28m²；1条纵向裂缝，缝长7.0m。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 第1跨 | 1#铺装 | / | 磨光、露骨，S=5.0×14.0m² |
+| 第1跨 | 1#铺装 | 1#墩顶 | 1处破损，S=0.2×1.0m² |
+| 第2跨 | 2#铺装 | / | 磨光、露骨，S=5.0×14.0m² |
+| 第2跨 | 2#铺装 | 2#墩顶 | 1处破损，S=0.4×0.8m² |
+| 第3跨 | 3#铺装 | / | 磨光、露骨，S=5.0×14.0m² |
+| 第3跨 | 3#铺装 | 3#墩顶 | 1处破损，S=0.3×1.0m² |
+| 第4跨 | 4#铺装 | / | 磨光、露骨，S=5.0×14.0m² |
+| 第4跨 | 4#铺装 | 4#墩顶 | 1处破损，S=0.4×1.0m² |
+| 第5跨 | 5#铺装 | / | 磨光、露骨，S=5.0×14.0m² |
+| 第5跨 | 5#铺装 | 距4#墩8.0m，右1.5m | 1处露筋，S=0.2×0.3m² |
+| 第5跨 | 5#铺装 | 4#墩顶，距右1.5m | 1条纵向裂缝，L=7.0m |
+
+#### 5.3.2 伸缩缝装置
+
+无此构件。
+
+#### 5.3.3 人行道
+
+无此构件。
+
+#### 5.3.4 栏杆、护栏
+
+栏杆未见明显病害。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 全桥 | 左侧栏杆 | / | 未见明显病害 |
+| 全桥 | 右侧栏杆 | / | 未见明显病害 |
+
+#### 5.3.5 排水系统
+
+排水系统主要病害：泄水孔部分堵塞。
+
+| 跨径编号 | 构件编号 | 病害位置 | 病害描述 |
+|---|---|---|---|
+| 全桥 | 排水系统 | 泄水孔 | 部分堵塞 |
+
+#### 5.3.6 照明、标志
+
+无此构件。`;
+
+function loadExample(){
+  document.getElementById('defectsInput').value = EXAMPLE_CASE_TEXT;
+}
+
+const API_BASE = "";
+
+
+// helpers
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function tbLegacyClassify(t){
+  const negated=/(无|未|没|不)(明显|进一步|新增)?(发展|扩展)/.test(t);
+  const worse=!negated&&/(有一定|稍有|略有|发展|扩展)/.test(t);
+  return worse?'develop':t.includes('缓慢')?'slow':/(改善|好转|修复)/.test(t)?'repair':'stable';
+}
+function tb(t){
+  const m={'快速发展':'develop','缓慢发展':'slow','稳定':'stable','改善恢复':'repair'};
+  const c=m[t]||tbLegacyClassify(t);
+  return'<span class="badge '+c+'">'+t+'</span>'
+}
+function gb(g){
+  const n=g&&g.match(/\d/)?g.match(/\d/)[0]:'';
+  return n?'<span class="badge s'+n+'">'+g+'</span>':g
+}
+
+
+// tabs
+function toTab(name){
+  ['reasoning','json','fullview'].forEach(n=>{
+    const tbEl = document.getElementById('tb-'+n);
+    const paneEl = document.getElementById('pane-'+n);
+    if (tbEl) tbEl.classList.toggle('active',n===name);
+    if (paneEl) paneEl.classList.toggle('active',n===name);
+  });
+}
+function setTabLive(name,on){
+  const el=document.getElementById('tb-'+name);
+  if(el) el.classList.toggle('tab-live',on);
+}
+
+
+// phase
+var _phase=0;
+function setPhase(p){
+  _phase=p;
+  document.getElementById('phaseBar').classList.add('visible');
+  [1,2].forEach(i=>{
+    const el=document.getElementById('phase'+i);
+    el.classList.remove('active','done');
+    if(i<p) el.classList.add('done');
+    else if(i===p) el.classList.add('active');
+  });
+  if(p>1) document.getElementById('phaseSep1').classList.add('done');
+  else document.getElementById('phaseSep1').classList.remove('done');
+}
+function hidePhase(){document.getElementById('phaseBar').classList.remove('visible')}
+
+// reconnect
+function showBanner(msg, canRetry){
+  document.getElementById('reconnectMsg').textContent=msg||'连接中断';
+  const btn=document.getElementById('retryBtn');
+  const btn2=document.getElementById('retryBtn2');
+  if(btn) btn.style.display=(canRetry===false)?'none':'';
+  if(btn2) btn2.style.marginLeft=(canRetry===false)?'auto':'6px';
+  document.getElementById('reconnectBanner').classList.add('visible');
+}
+function dismissBanner(){document.getElementById('reconnectBanner').classList.remove('visible')}
+function retryAnalysis(){dismissBanner();startAnalysis();}
+
+// thinking toggle
+var _thinkOpen=false;
+function toggleThinking(){
+  _thinkOpen=!_thinkOpen;
+  document.getElementById('thinkingBody').classList.toggle('open',_thinkOpen);
+  document.getElementById('thinkingArrow').classList.toggle('open',_thinkOpen);
+}
+function toggleExtractThink(){
+  const b=document.getElementById('extractThinkBody');
+  const a=document.getElementById('extractThinkArrow');
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);
+  a.classList.toggle('open',!open);
+}
+
+// scroll
+var _scrollPaused=false;
+var _extractScrollPaused=false;
+
+function bindScrollPause(elId, setter){
+  const el=document.getElementById(elId);
+  if(!el||el._scrollBound) return;
+  el._scrollBound=true;
+  el.addEventListener('scroll',()=>{
+    setter((el.scrollHeight-el.scrollTop-el.clientHeight)>80);
+  });
+}
+function autoScroll(elId, paused){
+  if(paused) return;
+  const el=document.getElementById(elId);
+  if(el) el.scrollTop=el.scrollHeight;
+}
+
+// ── Markdown renderer ──
+function renderMD(raw){
+  if(!raw) return '';
+  let h=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  h=h.replace(/^#### (.+)$/gm,'<h4>$1</h4>');
+  h=h.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  h=h.replace(/^# (.+)$/gm,'<h2>$1</h2>');
+  h=h.replace(/\*\*\*(.+?)\*\*\*/g,'<b><em>$1</em></b>');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  h=h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  h=h.replace(/^---+$/gm,'<hr>');
+  h=h.replace(/```[\w]*\n([\s\S]*?)```/g,'<pre><code>$1</code></pre>');
+  h=h.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+
+  let tableRows = [];
+  let tableMarkers = [];
+  let inTable = false;
+  let lines = h.split('\n');
+  let newLines = [];
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    let m = line.match(/^\|(.+)\|$/);
+    if (m) {
+      let cells = m[1].split('|').map(c => c.trim());
+      let isSep = cells.every(c => /^[-: ]+$/.test(c));
+      if (!inTable) {
+        inTable = true;
+        tableRows = [];
+        tableMarkers = [];
+        newLines.push('<!--TABLE_START-->');
+      }
+      tableRows.push(cells);
+      tableMarkers.push(isSep ? 2 : 1);
+    } else {
+      if (inTable) {
+        newLines.push('<!--TABLE_END-->');
+        inTable = false;
+        let html = '<table>';
+        for (let j = 0; j < tableRows.length; j++) {
+          if (tableMarkers[j] === 2) continue;
+          html += '<tr>';
+          tableRows[j].forEach(cell => { html += '<td>' + cell + '</td>'; });
+          html += '</tr>';
+        }
+        html += '</table>';
+        let lastStartIdx = newLines.lastIndexOf('<!--TABLE_START-->');
+        if (lastStartIdx !== -1) {
+          newLines[lastStartIdx] = html;
+          let endIdx = newLines.lastIndexOf('<!--TABLE_END-->');
+          if (endIdx !== -1) newLines.splice(endIdx, 1);
+        }
+      }
+      newLines.push(line);
+    }
+  }
+  if (inTable) {
+    let html = '<table>';
+    for (let j = 0; j < tableRows.length; j++) {
+      if (tableMarkers[j] === 2) continue;
+      html += '<tr>';
+      tableRows[j].forEach(cell => { html += '<td>' + cell + '</td>'; });
+      html += '</tr>';
+    }
+    html += '</table>';
+    let lastStartIdx = newLines.lastIndexOf('<!--TABLE_START-->');
+    if (lastStartIdx !== -1) newLines[lastStartIdx] = html;
+  }
+  h = newLines.join('\n');
+
+  lines = h.split('\n');
+  let out=[],buf='';
+  for(const l of lines){
+    if(/^(<h[1-6]|<table|<tr|<hr|<pre|<ul|<ol|<li)/.test(l.trim())||l.trim()===''){
+      if(buf){out.push('<p>'+buf+'</p>');buf='';}
+      if(l.trim()) out.push(l);
+    } else {
+      buf+=(buf?'<br>':'')+l;
+    }
+  }
+  if(buf) out.push('<p>'+buf+'</p>');
+  return out.join('\n');
+}
+
+// ====== 案例复现 (full view) ======
+function fvStats(data){
+  const ch6=data.chapter6||{};
+  let parts=0,rows=0,groups=0,items=0,noDefect=0;
+  Object.keys(ch6).forEach(pn=>{
+    const pd=ch6[pn]; if(!pd||typeof pd!=='object') return;
+    parts++;
+    if(pd.no_defect){noDefect++;return;}
+    (pd.rows||[]).forEach(r=>{
+      rows++;
+      (r.defects||[]).forEach(g=>{groups++;items+=(g.items||[]).length;});
+    });
+  });
+  return {parts,rows,groups,items,noDefect};
+}
+
+function fvToggle(headerEl){
+  const step=headerEl.closest('.step');
+  if(step) step.classList.toggle('open');
+}
+
+
+function fvFlow(){
+  function node(layer,cname,desc){
+    return '<div class="flow-node '+layer+'"><div class="fname">'+cname+'</div><div class="fdesc">'+desc+'</div></div>';
+  }
+  return '<div class="flow">'
+    +node('spec','规范层 Specification','病害归类、量化，映射为初步标度 S_init')
+    +'<div class="flow-arrow">→</div>'
+    +node('mech','机理层 Mechanism','趋势判断 + 八种病害模式匹配')
+    +'<div class="flow-arrow">→</div>'
+    +node('opt','优化层 Optimization','基于风险与趋势对标度做有限修正')
+    +'<div class="flow-arrow">→</div>'
+    +node('judge','判定层 Judgment','确定性代码计算，得出全桥等级')
+    +'</div>';
+}
+
+function fvChapter6(ch6){
+  const order=['上部承重构件','上部一般构件','支座','翼墙、耳墙','锥坡、护坡','桥墩','桥台','墩台基础','河床','调治构造物','桥面铺装','伸缩缝装置','人行道','栏杆、护栏','排水系统','照明、标志'];
+  const withRows=order.filter(pn=>{const pd=ch6[pn];return pd&&(pd.rows||[]).length;});
+  if(!withRows.length) return '<p>全部构件完好，未见明显病害。</p>';
+  let h='<p>按 JTG/T H21-2011 各病害评定表，对每个独立病害组初评病害标度 S_init（下表）。DP 扣分值与构件得分在步骤 4、5 中确定。</p>';
+  withRows.forEach(pn=>{
+    const pd=ch6[pn], rows=pd.rows;
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">'+escapeHtml(pn)+' <span style="color:var(--text-dim);font-weight:400">'+rows.length+' 个构件</span></p>';
+    h+='<table class="mtable"><thead><tr><th>跨径</th><th>构件</th><th>位置</th><th>病害</th><th>S_init</th></tr></thead><tbody>';
+    rows.forEach(r=>{
+      const groups=r.defects||[];
+      const spanTxt=escapeHtml(r.span||'—'), compTxt=escapeHtml(r.component||'—');
+      if(!groups.length){
+        h+='<tr><td>'+spanTxt+'</td><td>'+compTxt+'</td><td colspan="2">未见明显病害</td><td class="num">—</td></tr>';
+        return;
+      }
+      const totalRows=groups.reduce((sum,g)=>sum+Math.max((g.items||[]).length,1),0);
+      let rowIdx=0;
+      groups.forEach((g,gi)=>{
+        const items=g.items||[];
+        const itemCount=Math.max(items.length,1);
+        const sInit=(g.s_init!=null)?g.s_init:'—';
+        for(let ii=0;ii<itemCount;ii++){
+          h+='<tr>';
+          if(rowIdx===0) h+='<td rowspan="'+totalRows+'">'+spanTxt+'</td><td rowspan="'+totalRows+'">'+compTxt+'</td>';
+          if(items.length){
+            const it=items[ii];
+            const loc=(it.location&&it.location!=='/'&&it.location!=='—')?escapeHtml(it.location):'—';
+            h+='<td>'+loc+'</td><td>'+escapeHtml(it.desc||'')+'</td>';
+          } else {
+            h+='<td>—</td><td>'+escapeHtml(g.desc||'')+'</td>';
+          }
+          if(ii===0) h+='<td class="num" rowspan="'+itemCount+'">'+sInit+'</td>';
+          h+='</tr>';
+          rowIdx++;
+        }
+      });
+    });
+    h+='</tbody></table>';
+  });
+  return h;
+}
+
+function fvTrends(ch8){
+  const t=ch8.trends||[];
+  if(!t.length) return '<p>无历史对比数据，未进行发展趋势判断。</p>';
+  let h='<p>对比历次检测数据，判断病害发展趋势。</p>';
+  h+='<table class="mtable"><thead><tr><th>#</th><th>病害</th><th>上次检测</th><th>本次检测</th><th>趋势</th></tr></thead><tbody>';
+  t.forEach((r,i)=>{
+    h+='<tr><td class="num">'+(i+1)+'</td><td>'+escapeHtml(r.disease||'')+'</td><td>'+escapeHtml(r.last||'')+'</td><td>'+escapeHtml(r.current||'')+'</td><td>'+tb(r.trend||'')+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  return h;
+}
+
+function fvMechanism(ch8){
+  const md=ch8.mechanism_diagnosis;
+  if(!md) return '<p>本次未输出机理诊断。</p>';
+  let h='';
+  const models=md.models_overview||[];
+
+  // 诊断结论卡片：底框朴素(var(--bg3))，用字体颜色突出重点
+  h+='<div style="margin:0 0 10px;padding:10px 14px;border-left:4px solid var(--mech);border-radius:6px;background:var(--bg3);font-size:13px;line-height:1.7;color:var(--text)">';
+  h+='<div style="font-size:10px;color:var(--mech);font-family:\'JetBrains Mono\',monospace;letter-spacing:1px;margin-bottom:4px;font-weight:600">机理诊断结论</div>';
+  if(md.summary) h+=escapeHtml(md.summary);
+  if(md.primary_mechanism){
+    const conf=md.primary_confidence||'';
+    h+='<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-weight:600;color:var(--mech)">★ 主导机理：'+escapeHtml(md.primary_mechanism)+'（置信度：'+escapeHtml(conf||'未知')+'）</div>';
+  } else {
+    var topModel=null;
+    if(models.length){ topModel=models.reduce(function(a,b){return (b.max_match_score||0)>(a.max_match_score||0)?b:a;}); }
+    var topTxt=topModel?'，当前匹配度最高为 <b>'+escapeHtml(topModel.model_id)+'</b>（'+escapeHtml(topModel.name||'')+'，M='+((topModel.max_match_score||0)).toFixed(2)+'）':'';
+    h+='<div style="margin-top:8px;font-weight:600;color:var(--text-head)">当前证据尚不足以唯一判定主导机理'+topTxt+'，建议结合"建议进一步检测"项目补充验证。</div>';
+  }
+  h+='</div>';
+
+  // 模型匹配表：最高匹配模型用字体颜色+徽标突出（不加行背景）
+  if(models.length){
+    const maxScore=Math.max.apply(null,models.map(function(m){return m.max_match_score||0;}));
+    h+='<table class="mtable"><thead><tr><th>模型</th><th>名称</th><th>证据命中</th><th>匹配率</th><th>最高匹配度</th><th>触发</th></tr></thead><tbody>';
+    models.forEach(mo=>{
+      const isTop=((mo.max_match_score||0)===maxScore)&&maxScore>0;
+      const rowStyle=mo.triggered?'':' style="opacity:.7"';
+      h+='<tr'+rowStyle+'><td><b'+(isTop?' style="color:var(--mech)"':'')+'>'+escapeHtml(mo.model_id)+'</b>'+(isTop?' <span class="pill mech">最高匹配</span>':'')+'</td><td'+(isTop?' style="font-weight:600"':'')+'>'+escapeHtml(mo.name||'')+'</td><td class="num">'+escapeHtml(String(mo.hit_evidence_count||0))+'/'+escapeHtml(String(mo.total_evidence_count||0))+'</td><td class="num">'+((mo.match_rate||0)*100).toFixed(0)+'%</td><td class="num"'+(isTop?' style="color:var(--mech);font-weight:600"':'')+'>'+(mo.max_match_score||0).toFixed(2)+'</td><td>'+(mo.triggered?'<span class="pill mech">已触发</span>':'<span class="badge flag-off">未触发</span>')+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  const watch=md.watch_items||[],further=md.further_inspection||[];
+  if(watch.length||further.length){
+    h+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px">';
+    if(watch.length) h+='<div style="flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--border);border-left:4px solid #e8a936;border-radius:8px;padding:10px 12px"><div style="font-size:11px;color:#a05a00;margin-bottom:6px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.5px">👁 关注事项</div>'+watch.map(x=>'<div style="font-size:12px;line-height:1.7;padding:2px 0;color:var(--text)">· '+escapeHtml(x)+'</div>').join('')+'</div>';
+    if(further.length) h+='<div style="flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px"><div style="font-size:11px;color:var(--accent2);margin-bottom:6px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.5px">🔬 建议进一步检测</div>'+further.map(x=>'<div style="font-size:12px;line-height:1.7;padding:2px 0;color:var(--text)">· '+escapeHtml(x)+'</div>').join('')+'</div>';
+    h+='</div>';
+  }
+  return h;
+}
+
+function fvCalibration(ch6){
+  const order=['上部承重构件','上部一般构件','支座','翼墙、耳墙','锥坡、护坡','桥墩','桥台','墩台基础','河床','调治构造物','桥面铺装','伸缩缝装置','人行道','栏杆、护栏','排水系统','照明、标志'];
+  const rows=[];
+  order.forEach(pn=>{
+    const pd=ch6[pn]; if(!pd) return;
+    (pd.rows||[]).forEach(r=>{
+      (r.defects||[]).forEach(g=>{
+        const desc=(g.items&&g.items[0])?g.items[0].desc:'';
+        rows.push({comp:r.component, disease:desc, s_init:(g.s_init!=null?g.s_init:'—'), s_opt:(g.scale!=null?g.scale:'—'), dp:(g.dp!=null?g.dp:'—'), score:(r.score!=null?(+r.score).toFixed(2):'—')});
+      });
+    });
+  });
+  if(!rows.length) return '<p>本次未提取到病害标度校准数据。</p>';
+  let h='<p>按论文优化层公式，结合风险等级与发展趋势对标度做有限修正（S_init → S_opt），随后查表确定 DP 扣分值，并递归计算构件得分。</p>';
+  h+='<table class="mtable"><thead><tr><th>构件</th><th>病害组</th><th>S_init</th><th>→ S_opt</th><th>DP</th><th>构件得分</th></tr></thead><tbody>';
+  rows.forEach(x=>{
+    h+='<tr><td>'+escapeHtml(x.comp||'')+'</td><td>'+escapeHtml(x.disease||'')+'</td><td class="num">'+x.s_init+'</td><td class="num">'+x.s_opt+'</td><td class="num">'+x.dp+'</td><td class="num">'+x.score+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  return h;
+}
+
+function fvDimensionInference(data){
+  const di=(data&&data.dimension_inference)||[];
+  if(!di.length) return '';
+  let h='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">尺寸推算 / 面积占比依据</p>';
+  h+='<table class="mtable"><thead><tr><th>推算项</th><th>计算</th><th>说明</th></tr></thead><tbody>';
+  di.forEach(x=>{
+    h+='<tr><td>'+escapeHtml(x.item||'')+'</td><td>'+escapeHtml(x.calc||'')+'</td><td>'+escapeHtml(x.note||'')+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  return h;
+}
+
+function fvOverviewExtras(data){
+  const ch8=data.chapter8||{};
+  const fast=(ch8.trends||[]).filter(t=>t.trend==='快速发展');
+  const ds=(ch8.conclusion&&ch8.conclusion.disease_summary)||[];
+  const md=ch8.mechanism_diagnosis||{};
+  if(!fast.length && !ds.length && !md.summary) return '';
+  let h='<div class="fv-defect-card">';
+  // 重点关注（唯一保留强色警示，其余用分隔线统一在同一卡片内）
+  if(fast.length) h+='<div class="fv-defect-warn">⚠ 重点关注：'+fast.map(t=>escapeHtml(t.disease||'')).join('、')+'快速发展</div>';
+  // 病害标签云
+  if(ds.length) h+='<div class="fv-defect-tags">'+ds.slice(0,6).map(s=>'<span>'+escapeHtml(s)+'</span>').join('')+'</div>';
+  // 机理结论
+  if(md.summary) h+='<div class="fv-defect-mech">🔬 '+escapeHtml(md.summary.split('。')[0])+'。</div>';
+  h+='</div>';
+  return h;
+}
+
+function fvScores(ch7){
+  const cards=[['全桥','full_bridge'],['上部结构','upper_structure'],['下部结构','lower_structure'],['桥面系','deck']];
+  let h='<div class="score-grid">';
+  cards.forEach(c=>{
+    const sc=ch7[c[1]+'_score'],gr=ch7[c[1]+'_grade'];
+    h+='<div class="score-cell"><div class="sl">'+c[0]+'</div><div class="sv">'+(sc!=null?(+sc).toFixed(2):'—')+' <span class="unit">'+gb(gr)+'</span></div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function fvWeights(wr){
+  if(!(wr&&wr.length)) return '';
+  let h='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">部件权重重分配</p>';
+  h+='<table class="mtable"><thead><tr><th>序号</th><th>结构</th><th>部件</th><th>原权重</th><th>分配后</th><th>备注</th></tr></thead><tbody>';
+  wr.forEach(w=>h+='<tr><td class="num">'+escapeHtml(String(w.seq!=null?w.seq:''))+'</td><td>'+escapeHtml(w.structure||'')+'</td><td>'+escapeHtml(w.part||'')+'</td><td class="num">'+(+w.original).toFixed(4)+'</td><td class="num">'+(+w.redistributed).toFixed(4)+'</td><td>'+escapeHtml(w.note||'/')+'</td></tr>');
+  h+='</tbody></table>';
+  return h;
+}
+
+function fvPartTables(ch7){
+  const groups=[['upper_parts_detail','上部结构'],['lower_parts_detail','下部结构'],['deck_parts_detail','桥面系']];
+  let h='';
+  groups.forEach(g=>{
+    const list=ch7[g[0]]||[];
+    if(!list.length) return;
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">'+g[1]+' 部件评分</p>';
+    h+='<table class="mtable"><thead><tr><th>部件</th><th>构件数</th><th>构件评分</th><th>部件评分</th><th>等级</th></tr></thead><tbody>';
+    list.forEach(p=>{
+      const counts=p.counts||[];
+      if(!counts.length){
+        h+='<tr><td>'+escapeHtml(p.part||'')+'</td><td class="num">0</td><td>—</td><td class="num">'+(+p.part_score).toFixed(2)+'</td><td>'+escapeHtml(p.grade||'')+'</td></tr>';
+        return;
+      }
+      counts.forEach((ct,i)=>{
+        h+='<tr><td>'+(i===0?escapeHtml(p.part||''):'')+'</td><td class="num">'+ct.count+'</td><td class="num">'+(+ct.score).toFixed(2)+'</td><td class="num">'+(i===0?(+p.part_score).toFixed(2):'')+'</td><td>'+(i===0?escapeHtml(p.grade||''):'')+'</td></tr>';
+      });
+    });
+    h+='</tbody></table>';
+  });
+  return h;
+}
+
+function fvSummary(ch8){
+  const ds=(ch8.conclusion&&ch8.conclusion.disease_summary)||[];
+  if(!ds.length) return '';
+  let h='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">主要病害</p>';
+  ds.forEach((s,i)=>h+='<div style="font-size:13px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--border)"><b>'+(i+1)+'.</b> '+escapeHtml(s)+'</div>');
+  return h;
+}
+
+function fvJudge(ch7,wr){
+  let h='<div class="formula-box">U₁ = DP · Uₙ = DPₙ / (100·√x) · (100 − ΣU&lt;ₙ) · 构件得分 = 100 − ΣUₙ</div>';
+  h+='<p>按 JTG/T H21-2011 式(4.1.1)~式(4.1.4)：构件递归扣分 → 部件评分（含权重重分配）→ 结构部位评分 → 全桥定级。</p>';
+  h+=fvScores(ch7);
+  h+=fvWeights(wr);
+  h+=fvPartTables(ch7);
+  h+=fvChecks(ch7);
+  return h;
+}
+
+function fvChecks(ch7){
+  const c5=ch7.class5_checks||[], sc=ch7.special_checks||[];
+  if(!c5.length&&!sc.length) return '';
+  let h='';
+  if(c5.length){
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">5类桥梁单项控制指标核查</p>';
+    h+='<table class="mtable"><thead><tr><th style="width:30px">#</th><th>核查条款</th><th style="width:76px">是否触发</th></tr></thead><tbody>';
+    c5.forEach(x=>{
+      h+='<tr><td>'+(x.seq||'')+'</td><td>'+escapeHtml(x.item||'')+'</td><td>'+(x.triggered?'<span class="badge flag-on">触发</span>':'<span class="badge flag-off">未触发</span>')+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  if(sc.length){
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">特殊规定核查</p>';
+    h+='<table class="mtable"><thead><tr><th style="width:30px">#</th><th>核查条款</th><th>结论</th><th style="width:76px">是否触发</th></tr></thead><tbody>';
+    sc.forEach(x=>{
+      h+='<tr><td>'+(x.seq||'')+'</td><td>'+escapeHtml(x.item||'')+'</td><td>'+escapeHtml(x.result||'')+'</td><td>'+(x.triggered?'<span class="badge flag-on">触发</span>':'<span class="badge flag-off">未触发</span>')+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  return h;
+}
+
+function fvMissingInfo(ch8){
+  const mi=ch8.missing_info||{};
+  const items=mi.items||[];
+  const dcs=ch8.data_collection_suggestions||[];
+  let h='';
+  if(items.length||dcs.length){
+    if(items.length){
+      h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">信息缺失推定</p>';
+      h+='<table class="mtable"><thead><tr><th>缺失参数</th><th>处理方式</th><th>说明</th></tr></thead><tbody>';
+      items.forEach(it=>{
+        h+='<tr><td>'+escapeHtml(it.param||'')+'</td><td>'+escapeHtml(it.handling||'')+'</td><td>'+escapeHtml(it.note||'')+'</td></tr>';
+      });
+      h+='</tbody></table>';
+    }
+    if(dcs.length){
+      h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">数据进一步采集建议</p>';
+      dcs.forEach(s=>h+='<div class="fv-maint"><div class="fv-maint-num">•</div><div>'+escapeHtml(s)+'</div></div>');
+    }
+  } else {
+    h='<p>本次推理未识别到影响评定的信息缺失。</p>';
+  }
+  return h;
+}
+
+function fvOptimize(ch8){
+  let h='';
+  const ca=ch8.cause_analysis||{};
+  const hasCA=(ca.upper&&ca.upper.length)||(ca.lower&&ca.lower.length)||(ca.deck&&ca.deck.length);
+  if(hasCA){
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">病害原因分析</p>';
+    [['upper','上部结构'],['lower','下部结构'],['deck','桥面系']].forEach(x=>{
+      if(ca[x[0]]&&ca[x[0]].length){
+        h+='<p style="font-size:11px;color:var(--text-dim);margin:6px 0 3px;font-family:\'JetBrains Mono\',monospace">'+x[1]+'</p>';
+        ca[x[0]].forEach(txt=>h+='<div style="font-size:13px;line-height:1.7;padding:4px 0;border-bottom:1px dashed var(--border)">'+escapeHtml(txt)+'</div>');
+      }
+    });
+  }
+  const m=ch8.maintenance||{};
+  if(m.emergency||m.special_inspection||(m.routine&&m.routine.length)){
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">养护建议</p>';
+    if(m.emergency) h+='<div class="fv-emg">🚨 紧急处置：'+escapeHtml(m.emergency)+'</div>';
+    if(m.special_inspection) h+='<div class="fv-special">🔍 专项检查：'+escapeHtml(m.special_inspection)+'</div>';
+    if(m.routine&&m.routine.length) m.routine.forEach((r,i)=>h+='<div class="fv-maint"><div class="fv-maint-num">'+(i+1)+'</div><div>'+escapeHtml(r)+'</div></div>');
+  }
+  if(!hasCA&&!m.emergency&&!m.special_inspection&&!(m.routine&&m.routine.length)) h+='<p>本次未输出原因分析与养护建议。</p>';
+  h+=fvKeyDefects(ch8);
+  return h;
+}
+
+function fvKeyDefects(ch8){
+  const kda=ch8.key_defects_analysis;
+  if(!kda||!((kda.items||[]).length||kda.summary)) return '';
+  let h='';
+  if((kda.items||[]).length){
+    h+='<p style="font-size:12px;font-weight:700;color:var(--accent2);margin:10px 0 6px;font-family:\'JetBrains Mono\',monospace">影响评分的关键病害分析</p>';
+    h+='<table class="mtable"><thead><tr><th style="width:30px">#</th><th>关键病害</th><th>所属部件</th><th>关键指标与得分</th><th>评分影响路径与原因</th></tr></thead><tbody>';
+    kda.items.forEach(x=>{
+      h+='<tr><td>'+(x.seq||'')+'</td><td>'+escapeHtml(x.disease||'')+'</td><td>'+escapeHtml(x.part||'')+'</td><td>'+escapeHtml(x.indicator||'')+'</td><td style="font-size:11px;line-height:1.6">'+escapeHtml(x.path||'')+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  if(kda.summary) h+='<div style="margin:8px 0 0;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:12px;line-height:1.8;color:var(--text)">'+escapeHtml(kda.summary)+'</div>';
+  return h;
+}
+
+function renderFullView(data,meta){
+  if(!data) return '<div style="color:var(--red);padding:16px">无数据</div>';
+  const ch7=data.chapter7||{},ch8=data.chapter8||{},ch6=data.chapter6||{};
+  const wr=data.weight_redistribution||[];
+  const stats=fvStats(data);
+  const fullScore=(ch7.full_bridge_score!=null)?(+ch7.full_bridge_score).toFixed(2):'—';
+  const fullGrade=ch7.full_bridge_grade||'—';
+
+  const s0Body=fvDimensionInference(data)+fvMissingInfo(ch8);
+  const steps=[
+    {idx:0,layer:'none',code:'S0',title:'步骤 0 · 输入数据清洗与构件清单核对',summary:stats.parts+' 类部件 · '+stats.rows+' 个病害构件',body:s0Body,
+     hl:['⚡ 信息缺失推定','检测信息缺失时，系统显式识别缺失参数并标注处理方式（定性/单处面积/默认保守值），而非静默假设，必要时提出数据进一步采集建议。']},
+    {idx:1,layer:'spec',code:'S1',title:'病害标度初步评定',summary:stats.groups+' 个病害组',body:fvSummary(ch8)+fvChapter6(ch6),
+     hl:['⚡ 语义归类','同一构件上的同类病害（如措辞不同的露筋记录）按规范定义合并为一个病害组共同评定，而非按字面拆分成多个独立扣分。']},
+    {idx:2,layer:'mech',code:'S2a',title:'发展趋势判断（T1–T4）',summary:'历史数据对比',body:fvTrends(ch8)},
+    {idx:3,layer:'mech',code:'S2b',title:'病害机理匹配（M1–M8）',summary:'八种机理模式',body:fvMechanism(ch8),
+     hl:['⚡ 跨步骤综合','诊断结论综合本步骤全部匹配计算结果生成（如"机理不明确"），而非对单条数据的转述。']},
+    {idx:4,layer:'opt',code:'S3',title:'标度校准（优化层）',summary:'S_init → S_opt',body:fvCalibration(ch6)},
+    {idx:5,layer:'judge',code:'S4-6',title:'递归扣分与全桥等级判定',summary:'D_r = '+fullScore+' · '+fullGrade,body:fvJudge(ch7,wr),
+     hl:['⚡ 自检机制','递归扣分前对 DP 序列执行单调性自检，权重重分配后核对权重总和为 1.00，捕获多步骤计算的漂移风险。']},
+    {idx:6,layer:'none',code:'S6',title:'养护建议',summary:'原因 · 紧急 · 专项 · 常规',body:fvOptimize(ch8)}
+  ];
+
+  // 紧凑头部元数据
+  const metaLine=[];
+  if(meta&&meta.report_no) metaLine.push('报告 '+escapeHtml(meta.report_no));
+  if(meta&&meta.inspect_date) metaLine.push(escapeHtml(meta.inspect_date));
+  let h='<div class="fv-wrap">';
+
+  // 01 桥梁概况 —— 统一卡片：左侧评级色块（最高权重）+ 右侧详情（评定结果 > 桥梁参数 > 提取统计量 三级弱化）
+  h+='<div class="section" id="info">';
+
+  const gNum=fullGrade.match(/\d/);
+  const gCls=gNum?'grade-'+gNum[0]:'no-grade';
+
+  h+='<div class="fv-ov-card">';
+
+  // 左：全桥总评（唯一的高对比大字号，全页视觉锚点）
+  h+='<div class="fv-ov-score">';
+  h+='<div class="lbl">全桥技术状况</div>';
+  h+='<div class="grade '+gCls+'">'+escapeHtml(fullGrade)+'</div>';
+  h+='<div class="dr">D_r = '+fullScore+'</div>';
+  h+='</div>';
+
+  h+='<div class="fv-ov-body">';
+
+  // 桥名 + 元数据
+  h+='<div class="fv-ov-top">';
+  h+='<div class="fv-ov-name">'+escapeHtml(data.bridge_name||'未命名桥梁')+'</div>';
+  if(metaLine.length) h+='<div class="fv-ov-meta">'+metaLine.join(' · ')+'</div>';
+  h+='</div>';
+
+  // 上/下部结构、桥面系子评分 —— 与全桥评级同属"评定结果"，用色块 chip 突出，不与统计量混排
+  h+='<div class="fv-ov-subscores">';
+  [['上部结构','upper_structure'],['下部结构','lower_structure'],['桥面系','deck']].forEach(x=>{
+    const sc=ch7[x[1]+'_score'], gr=ch7[x[1]+'_grade'];
+    const gc=gr&&gr.match(/\d/)?'grade-'+gr.match(/\d/)[0]:'no-grade';
+    h+='<div class="fv-ov-chip '+gc+'"><span class="cl">'+x[0]+'</span><span class="cv">'+(sc!=null?(+sc).toFixed(2):'—')+' '+(gr||'—')+'</span></div>';
+  });
+  h+='</div>';
+
+  // 桥梁参数 —— 次级信息，虚线分隔
+  const bi=data.bridge_info||{};
+  const params=[
+    ['结构',escapeHtml(bi.structure_type||'—')],
+    ['跨径',escapeHtml(bi.span||'—')],
+    ['全长',escapeHtml(bi.length||'—')],
+    ['宽度',escapeHtml(bi.width||'—')],
+    ['荷载',escapeHtml(bi.design_load||'—')],
+    ['建成',escapeHtml(bi.built_year||'—')],
+    ['路线',escapeHtml((bi.route||'')+(bi.stake?' '+bi.stake:''))||'—']
+  ];
+  h+='<div class="fv-ov-params">';
+  params.forEach(p=>{ h+='<span>'+p[0]+' <b>'+p[1]+'</b></span>'; });
+  h+='</div>';
+
+  // 提取统计量 —— 最弱化，纯灰色一行文字，与上方"评定结果"明确分层
+  h+='<div class="fv-ov-stats">部件类数 <b>'+stats.parts+'</b> 类　病害构件 <b>'+stats.rows+'</b> 个　病害记录 <b>'+stats.groups+'</b> 组 / <b>'+stats.items+'</b> 条</div>';
+
+  h+='</div>'; // fv-ov-body
+  h+='</div>'; // fv-ov-card
+
+  // 病害概览卡：重点关注 + 标签云 + 机理结论 —— 合并进同一容器，用分隔线代替各自不同的背景/边框
+  h+=fvOverviewExtras(data);
+  h+='</div>';
+
+  // 02 四层推理全过程
+  h+='<div class="section" id="pipeline">';
+  h+='<div class="section-head"><span class="section-title">四层推理全过程</span></div>';
+  h+='<p class="section-desc">点击展开每一步的具体计算与依据。左侧色条标注所属推理层：<span class="pill spec">规范层</span> <span class="pill mech">机理层</span> <span class="pill opt">优化层</span> <span class="pill judge">判定层</span> <span class="pill none">前置/后置步骤</span></p>';
+  h+=fvFlow();
+  h+='<div class="spine">';
+  steps.forEach((s,i)=>{
+    const hlBlock=s.hl?'<div class="highlight"><span class="htag">'+s.hl[0]+'</span><span class="htext">'+s.hl[1]+'</span></div>':'';
+    h+='<div class="step'+(i===0?' open':'')+'" data-layer="'+s.layer+'">'
+      +'<div class="step-dot">'+s.idx+'</div>'
+      +'<div class="step-card">'
+      +'<div class="step-header" onclick="fvToggle(this)">'
+      +'<div class="step-title"><div class="stitle">'+s.title+'</div><div class="slayer">'+s.code+'</div></div>'
+      +'<div class="step-summary">'+s.summary+'</div>'
+      +'<div class="step-chevron">▶</div>'
+      +'</div>'
+      +'<div class="step-body">'+s.body+hlBlock+'</div>'
+      +'</div></div>';
+  });
+  h+='</div></div>';
+  h+='</div>';
+  return h;
+}
+
+function renderFullViewContent(){
+  const el=document.getElementById('fullviewContent');
+  if(!el||!_resultData) return;
+  el.innerHTML=renderFullView(_resultData);
+  el.style.display='block';
+  const empty=document.getElementById('emptyFullview');
+  if(empty) empty.style.display='none';
+}
+
+// result renderer
+
+
+
+// ── 编辑模式函数 ──
+
+
+
+
+
+
+// ── 病害组：groups(嵌套) <-> flat(扁平，带 groupStart 标记) 互转 ──
+// groupStart=true 表示该条病害是它所在组的第一条（组的分界）；
+// 组的标度/DP 只以组内第一条（groupStart===true）为准，其余条目的 scale/dp 字段仅用于展示时保持一致，转换回 groups 时会被忽略。
+
+
+
+
+
+// ── 拖拽排序（仅限同一构件/同一行内）──
+
+
+
+
+
+// ── 合并/拆分小图标：切换第 idx 行与第 idx+1 行之间的组边界 ──
+
+
+
+
+
+function renderResultContent() {
+  renderFullViewContent();
+}
+
+
+
+// download
+var _resultData=null;
+function downloadJSON(){
+  if(!_resultData) return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(_resultData,null,2)],{type:'application/json'}));
+  a.download='bridge_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+
+// status
+function setLoading(on){
+  document.getElementById('spinner').classList.toggle('active',on);
+  const btn=document.getElementById('analyzeBtn');
+  const stop=document.getElementById('stopBtn');
+  if(btn) btn.disabled=on;
+  if(stop) stop.style.display=on?'flex':'none';
+}
+function setSt(msg){document.getElementById('statusMsg').textContent=msg}
+
+// reset
+function resetAll(){
+  toTab('reasoning');
+  _scrollPaused=false; _extractScrollPaused=false;
+  _thinkOpen=false;
+
+  const sa=document.getElementById('streamArea'); sa.style.display='none';
+  const er0=document.getElementById('emptyReasoning');
+  er0.style.display='flex';
+  const erIcon=er0.querySelector('.empty-icon'); if(erIcon) erIcon.classList.remove('pulsing');
+  const erSkel=er0.querySelector('.skeleton-lines'); if(erSkel) erSkel.remove();
+  document.getElementById('thinkingBlock').style.display='none';
+  const tb=document.getElementById('thinkingBody'); tb._raw=''; tb.innerHTML=''; tb.classList.remove('open');
+  if(tb._rafPending){ cancelAnimationFrame(tb._rafPending); tb._rafPending=null; }
+  document.getElementById('thinkingArrow').classList.remove('open');
+  document.getElementById('thinkingCount').textContent='0 characters';
+  document.getElementById('extractThinkBlock').style.display='none';
+  const etb=document.getElementById('extractThinkBody'); etb._raw=''; etb.innerHTML=''; etb.classList.remove('open');
+  if(etb._rafPending){ cancelAnimationFrame(etb._rafPending); etb._rafPending=null; }
+  document.getElementById('extractThinkArrow').classList.remove('open');
+  document.getElementById('extractThinkCount').textContent='0 characters';
+  document.getElementById('reasoningWrap').style.display='none';
+  const rr=document.getElementById('reasoningRaw'); rr._raw=''; rr.innerHTML='';
+  rr.style.display='';  // 上一轮结束时会被设为 'none'（切换到 reasoningMD 显示最终结果），这里必须重置，否则下一轮流式内容会被隐藏，直到 result 事件才一次性显示
+  if(rr._rafPending){ cancelAnimationFrame(rr._rafPending); rr._rafPending=null; }
+  const rm=document.getElementById('reasoningMD'); rm.innerHTML=''; rm.style.display='none';
+
+  document.getElementById('emptyJson').style.display='flex';
+  document.getElementById('extractPane').style.display='none';
+  const es=document.getElementById('extractStream'); es._raw=''; es.innerHTML='';
+  if(es._rafPending){ cancelAnimationFrame(es._rafPending); es._rafPending=null; }
+  document.getElementById('jsonPane').style.display='none';
+  document.getElementById('jsonContent').textContent='';
+
+  const fve=document.getElementById('emptyFullview'); if(fve) fve.style.display='flex';
+  const fvc=document.getElementById('fullviewContent'); if(fvc){fvc.style.display='none';fvc.innerHTML='';}
+
+  setTabLive('reasoning',false); setTabLive('json',false); setTabLive('fullview',false);
+  hidePhase(); dismissBanner();
+  _resultData=null;
+  _reasoningText='';
+  _thinkingText='';
+  _outputText='';
+
+  document.getElementById('extractBtn').style.display = 'none';
+  document.getElementById('charCount').textContent='';
+}
+
+// stream helpers
+function _appendText(el, text){
+  el._raw = (el._raw||'') + text;
+  if(el._rafPending) return;
+  el._rafPending = requestAnimationFrame(()=>{
+    el._rafPending = null;
+    el.innerHTML = renderMD(el._raw);
+  });
+}
+// 在手动/绕过 _appendText 直接改写 innerHTML 之前调用，
+// 避免遗留的 rAF 回调之后再次覆盖，也避免 _rafPending 卡死导致下一轮不再触发渲染
+function _freeze(el){
+  if(el && el._rafPending){ cancelAnimationFrame(el._rafPending); el._rafPending=null; }
+}
+
+function showStreamArea(){
+  const sa=document.getElementById('streamArea');
+  if(sa.style.display==='none'||!sa.style.display){
+    document.getElementById('emptyReasoning').style.display='none';
+    sa.style.display='block';
+    bindScrollPause('streamArea', v=>{ _scrollPaused=v; });
+  }
+}
+
+function showExtractPane(){
+  document.getElementById('emptyJson').style.display='none';
+  const ep=document.getElementById('extractPane');
+  ep.style.display='flex';
+  bindScrollPause('extractStream', v=>{ _extractScrollPaused=v; });
+}
+
+// main analysis
+var _timerInterval=null, _abortCtrl=null, _startTime=null, _totalChars=0;
+var _reasoningText = '';
+var _thinkingText = '';
+var _outputText = '';
+
+// API Key 记忆：自动恢复上次填写的 Key（保存在浏览器 localStorage）
+(function(){
+  const k=document.getElementById('apiKeyInput');
+  if(k){
+    const saved=localStorage.getItem('bridge_api_key');
+    if(saved) k.value=saved;
+    k.addEventListener('input', ()=>{ localStorage.setItem('bridge_api_key', k.value.trim()); });
+  }
+})();
+
+async function startAnalysis(){
+  if(_abortCtrl){ _abortCtrl.abort(); _abortCtrl=null; }
+  _reasoningText = '';
+  if(!document.getElementById('defectsInput').value.trim()){alert('Please enter defect data');return;}
+  const payload={
+    bridge_id:'',bridge_name:'',report_no:'',inspect_date:'',
+    defects:{user_input:document.getElementById('defectsInput').value.trim()},
+    api_key:document.getElementById('apiKeyInput')?document.getElementById('apiKeyInput').value.trim():'',
+    debug:true,
+    reasoning_model:'deepseek-v4-flash',
+    reasoning_thinking:'enabled',
+    reasoning_effort:'high',
+  };
+  _doAnalysis(payload);
+}
+
+async function _doAnalysis(payload){
+  setLoading(true); resetAll();
+  // 骨架屏：在 LLM 吐出第一个 token 之前显示呼吸动画
+  const er0=document.getElementById('emptyReasoning');
+  const erIcon=er0.querySelector('.empty-icon'); if(erIcon) erIcon.classList.add('pulsing');
+  const skel=document.createElement('div'); skel.className='skeleton-lines';
+  skel.innerHTML='<div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div>';
+  er0.appendChild(skel);
+  _totalChars=0; _startTime=Date.now();
+  setPhase(1); setTabLive('reasoning',true);
+  setSt('Stage 1: model reasoning...');
+
+  _timerInterval=setInterval(()=>{
+    const s=((Date.now()-_startTime)/1000).toFixed(0);
+    setSt('Stage 1: model reasoning... elapsed '+s+'s'+(_totalChars>0?', generated '+(_totalChars/1000).toFixed(1)+'k chars':''));
+  },500);
+
+  try{
+    _abortCtrl=new AbortController();
+    const resp=await fetch(API_BASE+'/analyze',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','ngrok-skip-browser-warning':'true'},
+      signal:_abortCtrl.signal,
+      body:JSON.stringify(payload)
+    });
+    if(!resp.ok){
+      clearInterval(_timerInterval); setLoading(false);
+      setSt('Request failed: HTTP '+resp.status);
+      showBanner('Server returned an error ('+resp.status+'), please retry');
+      return;
+    }
+
+    const reader=resp.body.getReader(), dec=new TextDecoder();
+    let buf='', lastEvt=Date.now();
+
+    const hb=setInterval(()=>{
+      if(Date.now()-lastEvt>30000){
+        clearInterval(hb); clearInterval(_timerInterval); setLoading(false);
+        showBanner('No data received for over 30s, possibly a Cloudflare timeout — please restart');
+      }
+    },5000);
+
+    try{
+      while(true){
+        const{done,value}=await reader.read();
+        if(done) break;
+        lastEvt=Date.now();
+        buf+=dec.decode(value,{stream:true});
+        const lines=buf.split('\n'); buf=lines.pop();
+        for(const line of lines){
+          if(!line.startsWith('data:')) continue;
+          try{
+            const ev=JSON.parse(line.slice(5).trim());
+            lastEvt=Date.now();
+            handleEvent(ev, hb);
+          }catch(e){}
+        }
+      }
+      clearInterval(hb);
+    }catch(inner){clearInterval(hb);throw inner;}
+
+  }catch(e){
+    clearInterval(_timerInterval); setLoading(false);
+    if(e.name==='AbortError'){setSt('Manually stopped');}
+    else{setSt('Network error: '+e.message);showBanner('Network interrupted ('+e.message+'). 后端进程可能已退出（长时间闲置后可能发生），请关闭本页面并重新运行程序。',false);}
+  }
+}
+
+function handleEvent(ev, hb){
+  if(ev.type==='ping') return;
+
+  if(ev.type==='status'){
+    return;
+  }
+
+  if(ev.type==='checkpoint'){
+    _totalChars=0; return;
+  }
+
+  if(ev.type==='thinking'){
+    _totalChars+=ev.text.length;
+    const isExtract=(typeof _phase!=='undefined'&&_phase>=2);
+    if(!isExtract) _thinkingText+=ev.text;
+    const blockEl=document.getElementById(isExtract?'extractThinkBlock':'thinkingBlock');
+    const bodyEl=document.getElementById(isExtract?'extractThinkBody':'thinkingBody');
+    const countEl=document.getElementById(isExtract?'extractThinkCount':'thinkingCount');
+    const scrId=isExtract?'extractStream':'streamArea';
+    if(!isExtract) showStreamArea();
+    else document.getElementById('emptyJson').style.display='none';
+    blockEl.style.display='block';
+    _appendText(bodyEl, ev.text);
+    countEl.textContent=_totalChars.toLocaleString()+' characters';
+    autoScroll(scrId, isExtract?_extractScrollPaused:_scrollPaused);
+    return;
+  }
+
+  if(ev.type==='reasoning'){
+    _totalChars+=ev.text.length;
+    _outputText+=ev.text;
+    showStreamArea();
+    const rw=document.getElementById('reasoningWrap');
+    if(rw.style.display==='none'||!rw.style.display){
+      rw.style.display='block';
+      document.getElementById('reasoningRaw').textContent='';
+    }
+    const rr=document.getElementById('reasoningRaw');
+    _appendText(rr, ev.text);
+    autoScroll('streamArea', _scrollPaused);
+    return;
+  }
+
+  if(ev.type==='extraction'){
+    const es=document.getElementById('extractStream');
+    const isFirst = !es._raw;
+    _appendText(es, ev.text);
+    if(isFirst) toTab('json');
+    autoScroll('extractStream', _extractScrollPaused);
+    return;
+  }
+
+  if(ev.type==='result'){
+    clearInterval(hb); clearInterval(_timerInterval);
+    if(ev.reasoning){
+      _reasoningText = ev.reasoning;
+      const rr=document.getElementById('reasoningRaw');
+      const rm=document.getElementById('reasoningMD');
+      if(rr._raw){
+        _freeze(rr); rm.innerHTML=renderMD(rr._raw); rm.style.display='block'; rr.style.display='none';
+      }
+      setPhase(2);
+      setSt('Reasoning complete, '+((Date.now()-_startTime)/1000).toFixed(1)+'s elapsed');
+      document.getElementById('extractBtn').style.display='block';
+      setLoading(false);
+      return;
+    }
+    _resultData=ev.data;
+
+    const rr=document.getElementById('reasoningRaw');
+    const rm=document.getElementById('reasoningMD');
+    if(rr._raw&&rm.style.display==='none'){
+      _freeze(rr); rm.innerHTML=renderMD(rr._raw); rm.style.display='block'; rr.style.display='none';
+    }
+    _reasoningText = rr._raw||'';
+    const tb2=document.getElementById('thinkingBody');
+    if(tb2._raw&&!tb2.innerHTML.includes('<p>')){ _freeze(tb2); tb2.innerHTML=renderMD(tb2._raw); }
+
+    document.getElementById('extractPane').style.display='none';
+    document.getElementById('jsonPane').style.display='flex';
+    document.getElementById('jsonContent').textContent=JSON.stringify(_resultData,null,2);
+
+            renderResultContent();
+
+    setTabLive('json',false); setTabLive('fullview',true);
+    setPhase(2); toTab('fullview');
+    setSt('Analysis complete, '+((Date.now()-_startTime)/1000).toFixed(1)+'s elapsed');
+    document.getElementById('charCount').textContent=(_totalChars/1000).toFixed(1)+'k chars total';
+    setLoading(false);
+    setTimeout(()=>setTabLive('fullview',false),3000);
+    return;
+  }
+
+  if(ev.type==='done'){
+    clearInterval(hb); clearInterval(_timerInterval);
+    if(!_reasoningText){
+      const rr=document.getElementById('reasoningRaw');
+      if(rr._raw && rr._raw.length>0){
+        _reasoningText=rr._raw;
+        const rm=document.getElementById('reasoningMD');
+        _freeze(rr); rm.innerHTML=renderMD(rr._raw); rm.style.display='block'; rr.style.display='none';
+        document.getElementById('extractBtn').style.display='block';
+      }
+    }
+    setLoading(false); return;
+  }
+  if(ev.type==='error'){
+    clearInterval(hb); clearInterval(_timerInterval); setLoading(false);
+    setSt('Error: '+ev.message);
+    showBanner('Server error: '+ev.message);
+  }
+}
+
+function stopAnalysis(){if(_abortCtrl){_abortCtrl.abort();_abortCtrl=null;}}
+// ── 提取 ──
+async function extractData(){
+  const reasoningText = _reasoningText;
+  if(!reasoningText){alert('No report available');return;}
+
+  setSt('Extracting...');
+  setTabLive('json',true); toTab('json');
+  showExtractPane();
+  const es=document.getElementById('extractStream'); es._raw=''; es.innerHTML='';
+  const extractBtnInner = document.getElementById('extractBtnInner');
+  if(extractBtnInner) extractBtnInner.disabled = true;
+
+  // 提取过程防卡死：后端 /extract 出错时返回 type=error 事件（此前被静默忽略，
+  // 导致界面一直停在"正在结构化提取..."）。这里统一处理 error 事件，并加 90 秒
+  // 无数据兜底超时，保证要么出结果、要么明确报错，绝不无限转圈。
+  const failExtract=(msg)=>{
+    clearInterval(stallTimer);
+    const sp=document.getElementById('extractSpinner'); if(sp) sp.classList.remove('active');
+    const stEl=document.getElementById('extractStream');
+    if(stEl) stEl.innerHTML+='<div style="color:var(--red);margin-top:10px;font-family:\'Noto Sans SC\',sans-serif">⚠ '+escapeHtml(msg)+'</div>';
+    setSt('Extraction error');
+    if(extractBtnInner) extractBtnInner.disabled=false;
+  };
+  let lastEvt=Date.now();
+  const stallTimer=setInterval(()=>{
+    if(Date.now()-lastEvt>90000) failExtract('Extraction stalled: no data for 90s. 提取长时间无数据（请检查 API Key / 网络后重试）。');
+  },5000);
+
+  try{
+    const resp=await fetch(API_BASE+'/extract',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({reasoning_text: reasoningText, reasoning_think: _thinkingText, reasoning_output: _outputText, api_key:document.getElementById('apiKeyInput')?document.getElementById('apiKeyInput').value.trim():'', bridge_data:{bridge_id:'',bridge_name:'',report_no:'',inspect_date:'',defects:{user_input:document.getElementById('defectsInput').value.trim()}}})
+    });
+    const reader=resp.body.getReader(), dec=new TextDecoder();
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read(); if(done) break;
+      lastEvt=Date.now();
+      buf+=dec.decode(value,{stream:true});
+      const ls=buf.split('\n'); buf=ls.pop();
+      for(const l of ls){
+        if(!l.startsWith('data:')) continue;
+        try{
+          const ev=JSON.parse(l.slice(5).trim());
+          if(ev.type==='error'){ failExtract(ev.message||'Unknown error'); return; }
+          if(ev.type==='thinking'){
+            const etb=document.getElementById('extractThinkBody');
+            document.getElementById('extractThinkBlock').style.display='block';
+            _appendText(etb,ev.text);
+          }
+          if(ev.type==='extraction'){
+            const es=document.getElementById('extractStream');
+            _appendText(es,ev.text);
+          }
+          if(ev.type==='result'){
+            clearInterval(stallTimer);
+            _resultData=ev.data;
+            document.getElementById('extractPane').style.display='none';
+            document.getElementById('jsonPane').style.display='flex';
+            document.getElementById('jsonContent').textContent=JSON.stringify(_resultData,null,2);
+            renderResultContent();
+            setTabLive('json',false); setTabLive('fullview',true);
+            setPhase(2); toTab('fullview');
+          }
+          if(ev.type==='done') setSt('Extraction complete');
+        }catch(e){}
+      }
+    }
+    clearInterval(stallTimer);
+  }catch(e){ failExtract('Network error: '+e.message); return; }
+  if(extractBtnInner) extractBtnInner.disabled = false;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 心跳：每 3 秒告知后端"页面还开着"；
+// 关闭/刷新标签页后心跳停止，后端 watchdog 会在几秒内自动退出程序。
+// 连续多次心跳失败（网页仍开着，但后端已不可达——通常是 watchdog
+// 已判定"网页关闭"并自动退出了进程）时，提示用户关闭本页面并重新运行程序，
+// 避免用户对着一个已经空转、连不上后端的页面不知所措。
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let _heartbeatFailCount = 0;
+const HEARTBEAT_FAIL_THRESHOLD = 3; // 连续失败3次（约9秒）才提示，避免网络抖动误报
+setInterval(() => {
+  fetch('/heartbeat', { method: 'POST', keepalive: true })
+    .then(res => {
+      if (res.ok) {
+        _heartbeatFailCount = 0;
+      } else {
+        _heartbeatFailCount++;
+      }
+    })
+    .catch(() => {
+      _heartbeatFailCount++;
+    })
+    .finally(() => {
+      if (_heartbeatFailCount === HEARTBEAT_FAIL_THRESHOLD) {
+        showBanner('Backend process appears to have exited (this can happen after long idle periods). Please close this page and re-run the program. 后端进程似乎已退出（长时间闲置后可能发生），请关闭本页面并重新运行程序。', false);
+      }
+    });
+}, 3000);
+
+
+</script>
+</body>
+</html>
