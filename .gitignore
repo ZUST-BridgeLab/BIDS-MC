@@ -1,0 +1,20 @@
+# PyInstaller 构建产物
+build/
+dist/
+*.spec.bak
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 环境变量/密钥（如果本地有.env存API Key，千万别传）
+.env
+*.key
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
