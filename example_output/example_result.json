@@ -1,0 +1,1229 @@
+{
+  "bridge_name": "蒋东岙桥",
+  "bridge_info": {
+    "route": "已脱敏",
+    "stake": "已脱敏",
+    "structure_type": "普通钢筋混凝土空心板简支梁桥",
+    "span": "5×14.0m",
+    "length": "72.0m",
+    "width": "5.6m",
+    "built_year": "1996",
+    "design_load": "汽车-20级、挂车-100"
+  },
+  "dimension_inference": [],
+  "chapter6": {
+    "上部承重构件": {
+      "component_type": "上部承重构件",
+      "rows": [
+        {
+          "span": "第1跨",
+          "component": "1-5#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "腹板，距0#台2.0～11.0m",
+                  "desc": "16条竖向裂缝，L总=8.0m，Wmax=0.18mm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第2跨",
+          "component": "2-1#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距1#墩1.0～4.0m",
+                  "desc": "12条横向裂缝，L总=12.0m，Wmax=0.14mm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第2跨",
+          "component": "2-3#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距1#墩2.0～10.0m",
+                  "desc": "26条横向裂缝，L总=26.0m，Wmax=0.18mm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第2跨",
+          "component": "2-5#板",
+          "score": 64.39,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距1#墩1.0～10.0m",
+                  "desc": "26条横向裂缝，L总=26.0m，Wmax=0.18mm"
+                },
+                {
+                  "location": "腹板，距1#墩3.0～10.0m",
+                  "desc": "17条竖向裂缝，L总=5.1m，Wmax=0.16mm"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距1#墩8.0m",
+                  "desc": "1处破损露筋，S=0.3×0.3m²"
+                },
+                {
+                  "location": "腹板，距1#墩1.0～6.0m",
+                  "desc": "4处锈胀露筋，S总=0.1×0.6m²"
+                },
+                {
+                  "location": "腹板，距1#墩1.5～2.0m",
+                  "desc": "2处锈胀露筋，S总=0.2×0.3m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第4跨",
+          "component": "4-1#板",
+          "score": 64.39,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距3#墩4.0～6.0m",
+                  "desc": "12条横向裂缝，L总=12.0m，Wmax=0.18mm"
+                },
+                {
+                  "location": "腹板，距3#墩2.0～10.0m",
+                  "desc": "18条竖向裂缝，L总=9.0m，Wmax=0.18mm"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距3#墩8.0~9.0m",
+                  "desc": "2处破损露筋，S总=0.2×0.4m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第4跨",
+          "component": "4-5#板",
+          "score": 64.39,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "腹板，距3#墩3.0～10.0m",
+                  "desc": "16条竖向裂缝，L总=8.0m，Wmax=0.18mm"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "腹板，距3#墩11.5～12.8m",
+                  "desc": "3处锈胀露筋，S总=0.3×0.3m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5-1#板",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "腹板，距4#墩0.5～3.0m",
+                  "desc": "7处锈胀露筋，S总=0.7×0.3m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5-2#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距4#墩8.0～11.0m",
+                  "desc": "10条横向裂缝，L总=10.0m，Wmax=0.16mm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5-4#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距4#墩2.0～5.0m",
+                  "desc": "8条横向裂缝，L总=8.0m，Wmax=0.16mm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5-5#板",
+          "score": 75,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "底板，距4#墩3.0～12.0m",
+                  "desc": "21条横向裂缝，L总=21.0m，Wmax=0.16mm，局部伴有渗水析白"
+                },
+                {
+                  "location": "腹板，距4#墩3.0～12.0m",
+                  "desc": "21条竖向裂缝，L总=21.0m，Wmax=0.18mm，局部伴有渗水析白"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "上部一般构件": {
+      "component_type": "上部一般构件",
+      "rows": [
+        {
+          "span": "第5跨",
+          "component": "5-2#铰缝",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "渗水，L=8.0m"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5-3#铰缝",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "渗水，L=5.0m"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "支座": {
+      "no_defect": true,
+      "component_type": "支座"
+    },
+    "翼墙、耳墙": {},
+    "锥坡、护坡": {},
+    "桥墩": {
+      "component_type": "桥墩",
+      "rows": [
+        {
+          "span": "1#墩",
+          "component": "1#墩帽",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "1-1#墩帽，左侧端部",
+                  "desc": "1处麻面，S=0.2×0.8m²"
+                },
+                {
+                  "location": "2-1#墩帽，距右0.5～2.5m",
+                  "desc": "1处麻面，S=0.6×0.3m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "2#墩",
+          "component": "2#墩帽",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "2-2#墩帽，左侧端部",
+                  "desc": "1处麻面，S=0.5×0.3m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "2#墩",
+          "component": "2#墩身",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 3,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "1处砌缝脱落，S=1.0×2.0m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "3#墩",
+          "component": "3#墩身",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 3,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "1处砌缝脱落，S=1.0×2.0m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "4#墩",
+          "component": "4#墩身",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 3,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "1处砌缝脱落，S=1.0×2.0m²"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "桥台": {
+      "component_type": "桥台",
+      "rows": [
+        {
+          "span": "0#台",
+          "component": "0#台帽",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "水侵害、长青苔"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "5#台",
+          "component": "5#台帽",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "水侵害、长青苔"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "墩台基础": {
+      "no_defect": true,
+      "component_type": "墩台基础"
+    },
+    "河床": {
+      "no_defect": true,
+      "component_type": "河床"
+    },
+    "调治构造物": {
+      "no_defect": true,
+      "component_type": "调治构造物"
+    },
+    "桥面铺装": {
+      "component_type": "桥面铺装",
+      "rows": [
+        {
+          "span": "第1跨",
+          "component": "1#铺装",
+          "score": 61.74,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 4,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "磨光、露骨，S=5.0×14.0m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "1#墩顶",
+                  "desc": "1处破损，S=0.2×1.0m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第2跨",
+          "component": "2#铺装",
+          "score": 61.74,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 4,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "磨光、露骨，S=5.0×14.0m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "2#墩顶",
+                  "desc": "1处破损，S=0.4×0.8m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第3跨",
+          "component": "3#铺装",
+          "score": 61.74,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 4,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "磨光、露骨，S=5.0×14.0m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "3#墩顶",
+                  "desc": "1处破损，S=0.3×1.0m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第4跨",
+          "component": "4#铺装",
+          "score": 61.74,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 4,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "磨光、露骨，S=5.0×14.0m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "4#墩顶",
+                  "desc": "1处破损，S=0.4×1.0m²"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "span": "第5跨",
+          "component": "5#铺装",
+          "score": 54.61,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 4,
+              "items": [
+                {
+                  "location": "/",
+                  "desc": "磨光、露骨，S=5.0×14.0m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 25,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "距4#墩8.0m，右1.5m",
+                  "desc": "1处露筋，S=0.2×0.3m²"
+                }
+              ]
+            },
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "4#墩顶，距右1.5m",
+                  "desc": "1条纵向裂缝，L=7.0m"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "伸缩缝装置": {},
+    "人行道": {},
+    "栏杆、护栏": {
+      "no_defect": true,
+      "component_type": "栏杆、护栏"
+    },
+    "排水系统": {
+      "component_type": "排水系统",
+      "rows": [
+        {
+          "span": "全桥",
+          "component": "排水系统",
+          "score": 80,
+          "defects": [
+            {
+              "scale": 2,
+              "dp": 20,
+              "s_init": 2,
+              "items": [
+                {
+                  "location": "泄水孔",
+                  "desc": "部分堵塞"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "照明、标志": {}
+  },
+  "chapter7": {
+    "upper_structure_score": 87.19,
+    "upper_structure_grade": "2类",
+    "lower_structure_score": 92.65,
+    "lower_structure_grade": "2类",
+    "deck_score": 66.92,
+    "deck_grade": "3类",
+    "full_bridge_score": 85.32,
+    "full_bridge_grade": "2类",
+    "upper_parts_detail": [
+      {
+        "part": "上部承重构件",
+        "part_score": 82.99,
+        "grade": "2类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 15
+          },
+          {
+            "score": 80,
+            "count": 1
+          },
+          {
+            "score": 75,
+            "count": 6
+          },
+          {
+            "score": 64.39,
+            "count": 3
+          }
+        ]
+      },
+      {
+        "part": "上部一般构件",
+        "part_score": 94.97,
+        "grade": "2类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 18
+          },
+          {
+            "score": 80,
+            "count": 2
+          }
+        ]
+      },
+      {
+        "part": "支座",
+        "part_score": 100,
+        "grade": "1类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 100
+          }
+        ]
+      }
+    ],
+    "lower_parts_detail": [
+      {
+        "part": "桥墩",
+        "part_score": 85.15,
+        "grade": "2类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 3
+          },
+          {
+            "score": 80,
+            "count": 5
+          }
+        ]
+      },
+      {
+        "part": "桥台",
+        "part_score": 91.09,
+        "grade": "2类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 4
+          },
+          {
+            "score": 80,
+            "count": 2
+          }
+        ]
+      },
+      {
+        "part": "墩台基础",
+        "part_score": 100,
+        "grade": "1类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 6
+          }
+        ]
+      },
+      {
+        "part": "河床",
+        "part_score": 100,
+        "grade": "1类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 1
+          }
+        ]
+      },
+      {
+        "part": "调治构造物",
+        "part_score": 100,
+        "grade": "1类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "deck_parts_detail": [
+      {
+        "part": "桥面铺装",
+        "part_score": 55.39,
+        "grade": "4类",
+        "counts": [
+          {
+            "score": 61.74,
+            "count": 4
+          },
+          {
+            "score": 54.61,
+            "count": 1
+          }
+        ]
+      },
+      {
+        "part": "栏杆、护栏",
+        "part_score": 100,
+        "grade": "1类",
+        "counts": [
+          {
+            "score": 100,
+            "count": 2
+          }
+        ]
+      },
+      {
+        "part": "排水系统",
+        "part_score": 80,
+        "grade": "2类",
+        "counts": [
+          {
+            "score": 80,
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "class5_checks": [
+      {
+        "seq": 1,
+        "item": "上部结构有落梁、梁板断裂现象",
+        "triggered": false
+      },
+      {
+        "seq": 2,
+        "item": "承重构件控制截面全截面开裂",
+        "triggered": false
+      },
+      {
+        "seq": 3,
+        "item": "结构出现明显永久变形",
+        "triggered": false
+      },
+      {
+        "seq": 4,
+        "item": "关键部位混凝土压碎或桥面板严重塌陷",
+        "triggered": false
+      },
+      {
+        "seq": 5,
+        "item": "扩大基础冲刷深度大于设计值，冲空面积≥20%",
+        "triggered": false
+      },
+      {
+        "seq": 6,
+        "item": "桥墩桥台基础不稳定，严重滑动",
+        "triggered": false
+      }
+    ],
+    "special_checks": [
+      {
+        "seq": 1,
+        "item": "第4.1.8条：主要部件评分达到4类或5类且影响安全时按最差缺损评定",
+        "result": "主要部件中无任一部件评分达到4类或5类，且未影响结构安全，不触发。",
+        "triggered": false
+      },
+      {
+        "seq": 2,
+        "item": "第4.1.7条：上部结构3类、下部结构3类、桥面系4类且40≤Dr<60时定3类",
+        "result": "上部结构2类、下部结构2类、桥面系3类，不满足限定组合条件，未触发。",
+        "triggered": false
+      }
+    ]
+  },
+  "weight_redistribution": [
+    {
+      "seq": 1,
+      "structure": "上部结构",
+      "part": "上部承重构件",
+      "original": 0.7,
+      "redistributed": 0.7,
+      "note": "/"
+    },
+    {
+      "seq": 2,
+      "structure": "上部结构",
+      "part": "上部一般构件",
+      "original": 0.18,
+      "redistributed": 0.18,
+      "note": "/"
+    },
+    {
+      "seq": 3,
+      "structure": "上部结构",
+      "part": "支座",
+      "original": 0.12,
+      "redistributed": 0.12,
+      "note": "/"
+    },
+    {
+      "seq": 4,
+      "structure": "下部结构",
+      "part": "翼墙、耳墙",
+      "original": 0.02,
+      "redistributed": 0,
+      "note": "无此构件"
+    },
+    {
+      "seq": 5,
+      "structure": "下部结构",
+      "part": "锥坡、护坡",
+      "original": 0.01,
+      "redistributed": 0,
+      "note": "无此构件"
+    },
+    {
+      "seq": 6,
+      "structure": "下部结构",
+      "part": "桥墩",
+      "original": 0.3,
+      "redistributed": 0.30928,
+      "note": "/"
+    },
+    {
+      "seq": 7,
+      "structure": "下部结构",
+      "part": "桥台",
+      "original": 0.3,
+      "redistributed": 0.30928,
+      "note": "/"
+    },
+    {
+      "seq": 8,
+      "structure": "下部结构",
+      "part": "墩台基础",
+      "original": 0.28,
+      "redistributed": 0.28866,
+      "note": "/"
+    },
+    {
+      "seq": 9,
+      "structure": "下部结构",
+      "part": "河床",
+      "original": 0.07,
+      "redistributed": 0.07216,
+      "note": "/"
+    },
+    {
+      "seq": 10,
+      "structure": "下部结构",
+      "part": "调治构造物",
+      "original": 0.02,
+      "redistributed": 0.02062,
+      "note": "/"
+    },
+    {
+      "seq": 11,
+      "structure": "桥面系",
+      "part": "桥面铺装",
+      "original": 0.4,
+      "redistributed": 0.66667,
+      "note": "/"
+    },
+    {
+      "seq": 12,
+      "structure": "桥面系",
+      "part": "伸缩缝装置",
+      "original": 0.25,
+      "redistributed": 0,
+      "note": "无此构件"
+    },
+    {
+      "seq": 13,
+      "structure": "桥面系",
+      "part": "人行道",
+      "original": 0.1,
+      "redistributed": 0,
+      "note": "无此构件"
+    },
+    {
+      "seq": 14,
+      "structure": "桥面系",
+      "part": "栏杆、护栏",
+      "original": 0.1,
+      "redistributed": 0.16667,
+      "note": "/"
+    },
+    {
+      "seq": 15,
+      "structure": "桥面系",
+      "part": "排水系统",
+      "original": 0.1,
+      "redistributed": 0.16667,
+      "note": "/"
+    },
+    {
+      "seq": 16,
+      "structure": "桥面系",
+      "part": "照明、标志",
+      "original": 0.05,
+      "redistributed": 0,
+      "note": "无此构件"
+    }
+  ],
+  "chapter8": {
+    "conclusion": {
+      "score": 85.32,
+      "grade": "2类",
+      "disease_summary": [
+        "上部空心板普遍存在横向、竖向裂缝，最大缝宽0.18mm，局部渗水析白；部分板存在剥落露筋、锈胀露筋",
+        "上部一般构件铰缝渗水2处，长度共计13.0m",
+        "桥面铺装大面积磨光露骨，局部破损及纵向裂缝",
+        "下部墩帽麻面、墩身砌缝脱落、台帽水侵害长青苔",
+        "支座、基础、河床、调治构造物、栏杆未见明显病害"
+      ]
+    },
+    "trends": [
+      {
+        "seq": 1,
+        "disease": "空心板竖向裂缝",
+        "last": "79条，36.1m，0.10～0.18mm",
+        "current": "88条，51.1m，Wmax=0.18mm",
+        "trend": "缓慢发展"
+      },
+      {
+        "seq": 2,
+        "disease": "空心板横向裂缝",
+        "last": "115条，115.0m，0.10～0.18mm",
+        "current": "115条，115.0m，Wmax=0.18mm",
+        "trend": "稳定"
+      },
+      {
+        "seq": 3,
+        "disease": "锈胀露筋",
+        "last": "12处，0.36m²",
+        "current": "16处，0.42m²",
+        "trend": "缓慢发展"
+      },
+      {
+        "seq": 4,
+        "disease": "破损露筋",
+        "last": "3处，0.17m²",
+        "current": "3处，0.17m²",
+        "trend": "稳定"
+      },
+      {
+        "seq": 5,
+        "disease": "铰缝渗水",
+        "last": "2条，13.0m",
+        "current": "2条，13.0m",
+        "trend": "稳定"
+      },
+      {
+        "seq": 6,
+        "disease": "墩帽麻面",
+        "last": "3处，0.49m²",
+        "current": "3处，0.49m²",
+        "trend": "稳定"
+      },
+      {
+        "seq": 7,
+        "disease": "墩身砌缝脱落",
+        "last": "3处，6.0m²",
+        "current": "3处，6.0m²",
+        "trend": "稳定"
+      },
+      {
+        "seq": 8,
+        "disease": "台帽水侵害",
+        "last": "2处",
+        "current": "2处",
+        "trend": "稳定"
+      },
+      {
+        "seq": 9,
+        "disease": "桥面铺装磨光露骨",
+        "last": "轻微磨损5处",
+        "current": "每跨70m²大面积磨光露骨",
+        "trend": "快速发展"
+      },
+      {
+        "seq": 10,
+        "disease": "桥面铺装破损",
+        "last": "4处，0.55m²",
+        "current": "5处，1.28m²",
+        "trend": "快速发展"
+      },
+      {
+        "seq": 11,
+        "disease": "桥面铺装纵向裂缝",
+        "last": "无记录",
+        "current": "5#铺装纵向裂缝7.0m",
+        "trend": "缓慢发展"
+      },
+      {
+        "seq": 12,
+        "disease": "泄水孔堵塞",
+        "last": "无记录",
+        "current": "部分堵塞",
+        "trend": "稳定"
+      }
+    ],
+    "cause_analysis": {
+      "upper": [
+        "上部空心板裂缝最大缝宽0.18mm，未超过规范限值0.25mm，但横向裂缝和竖向裂缝数量多，可能存在早期受力裂缝和混凝土收缩裂缝混合；锈胀露筋与混凝土碳化、保护层不足及水侵害有关，但缺少碳化深度和锈蚀电位数据。",
+        "铰缝渗水伴随5#铺装纵向裂缝，提示存在铰缝失效—单板受力的早期征兆，但尚无梁板错台和动态异常证据。"
+      ],
+      "lower": [
+        "墩帽麻面、墩身砌缝脱落属圬工局部缺损和表面劣化；台帽水侵害、长青苔表明台背排水不畅，可能存在积水长期浸蚀台帽。"
+      ],
+      "deck": [
+        "桥面铺装磨光露骨和破损发展迅速，可能与水泥混凝土面层长期磨损、铺装防水层失效及局部车载集中作用有关；泄水孔部分堵塞加剧桥面积水，进一步加速铺装劣化。"
+      ]
+    },
+    "mechanism_diagnosis": {
+      "summary": "当前上部空心板裂缝较多，M2匹配度最高，但M≈0.30～0.33，未达到0.60，不能唯一判定为“跨中弯曲裂缝-承载力不足”主导机理。需补充跨中挠度、裂缝形态（下宽上窄/枣核型）及动载变形观测。M1（铰缝失效-单板受力）存在铰缝渗水与桥面纵向裂缝的早期线索，但无梁板错台、无动态异常变形，M≈0.30，证据不足；应重点监测5#跨铰缝与铺装纵向裂缝关系。M4（钢筋锈蚀）在锈胀露筋构件（2-5#、4-5#、5-1#）中表现明显，但缺少碳化深度、氯离子含量、锈蚀电位等数据，暂不能确定锈蚀速率。M7（桥面铺装功能退化）明确存在，磨光露骨发展迅速，应作为桥面系首要养护对象。下部结构病害均属局部外观/圬工缺损，无机理明确的结构性病害。支座、基础、河床、调治构造物未见明显病害。",
+      "models_overview": [
+        {
+          "model_id": "M1",
+          "name": "铰缝失效—单板受力",
+          "hit_evidence_count": 2,
+          "total_evidence_count": 4,
+          "match_rate": 0.5,
+          "max_match_score": 0.362,
+          "triggered": false
+        },
+        {
+          "model_id": "M2",
+          "name": "跨中弯曲裂缝-承载力不足",
+          "hit_evidence_count": 1,
+          "total_evidence_count": 3,
+          "match_rate": 0.333,
+          "max_match_score": 0.304,
+          "triggered": false
+        }
+      ],
+      "primary_mechanism": null,
+      "primary_confidence": "不明确",
+      "watch_items": [
+        "上部空心板裂缝长度、宽度是否有快速发展",
+        "铰缝渗水是否扩大、是否出现梁板错台",
+        "5#铺装纵向裂缝是否与铰缝渗水部位关联",
+        "锈胀露筋面积是否扩展、混凝土是否有新剥落",
+        "桥面铺装磨光露骨面积是否继续扩大",
+        "台背排水及台帽水侵害是否加重"
+      ],
+      "further_inspection": [
+        "跨中挠度测量",
+        "裂缝形态调查（下宽上窄/枣核型）及裂缝宽度长期监测",
+        "碳化深度、氯离子含量、钢筋锈蚀电位检测",
+        "铰缝内部损伤检查及单板受力动态观测",
+        "桥面铺装厚度及防水层完好性检测",
+        "墩台沉降、河床冲刷监测"
+      ]
+    },
+    "maintenance": {
+      "emergency": "无需交通管制或封闭；如发现裂缝宽度突变、铰缝错台或铺装塌陷，应立即上报并采取临时处置。",
+      "special_inspection": "对上部空心板裂缝、铰缝渗水、锈胀露筋区域进行专项检测；对桥面铺装进行专项检测，必要时进行加铺或重做方案设计。",
+      "routine": [
+        "对空心板裂缝进行表面封闭或灌浆处理",
+        "对剥落露筋区域凿除松散混凝土、除锈、聚合物砂浆修复",
+        "对铰缝渗水进行注浆封闭；检查铰缝内部脱空情况",
+        "对墩帽麻面、墩身砌缝脱落进行修补、勾缝",
+        "清理台背排水沟，疏通泄水孔，避免积水浸蚀台帽",
+        "定期巡视桥面铺装破损、纵向裂缝和磨光露骨发展情况"
+      ]
+    },
+    "missing_info": {
+      "items": [
+        {
+          "param": "空心板构件尺寸（板宽、板高、表面积）",
+          "handling": "按单处面积/定性评定",
+          "note": "影响裂缝、剥落面积占比计算"
+        },
+        {
+          "param": "跨中挠度",
+          "handling": "采用定性评定",
+          "note": "影响弯拉裂缝定量判定"
+        },
+        {
+          "param": "桥面铺装裂缝宽度",
+          "handling": "按局部未贯通定性评定",
+          "note": "无法精确对照表10.1.2-7"
+        },
+        {
+          "param": "混凝土碳化深度、氯离子含量、锈蚀电位",
+          "handling": "暂无定量数据，按表5.1.1-2评定",
+          "note": "影响锈蚀速率判定"
+        },
+        {
+          "param": "墩身、墩帽尺寸及砌缝脱落部位面积占比",
+          "handling": "按单处大块面积定性评定",
+          "note": "无法计算面积占比"
+        },
+        {
+          "param": "铰缝内部结构损伤情况",
+          "handling": "采用外观定性评定",
+          "note": "无法确定铰缝是否完全失效"
+        },
+        {
+          "param": "台帽水侵害面积",
+          "handling": "按定性评定",
+          "note": "无具体面积数据"
+        }
+      ]
+    },
+    "data_collection_suggestions": [
+      "补充跨中挠度测量",
+      "对裂缝进行形态调查和宽度长期监测",
+      "检测碳化深度、氯离子含量和钢筋锈蚀电位",
+      "检查铰缝内部损伤及单板受力情况",
+      "检测桥面铺装厚度及防水层完好性",
+      "定期测量墩台沉降和河床冲刷情况"
+    ],
+    "key_defects_analysis": {
+      "summary": "上部承重构件以低标度裂缝+局部剥落露筋为主，尚未形成低于60分的构件，未触发主要部件4类限制；桥面铺装因大面积磨光露骨和破损，虽经EX-2将标度下调至2，但多病害组叠加使桥面铺装部件得分低于60，导致桥面系降为3类。由于上、下部结构评分较高，全桥仍为2类。未来养护最优先方向应是：防止桥面铺装病害进一步发展引发水害下渗，进而导致铰缝失效和空心板锈蚀加重；同时对上部裂缝和铰缝渗水建立动态监测。",
+      "items": [
+        {
+          "seq": 1,
+          "disease": "5#桥面铺装磨光露骨+破损+纵向裂缝",
+          "part": "桥面铺装",
+          "indicator": "磨光露骨S=70m²（标度4）；破损S=0.06m²；纵向裂缝L=7m；构件得分54.61",
+          "path": "磨光露骨因EX-2强制取S_opt=2、M_opt=4、DP=25；破损DP=25；裂缝DP=20。三组扣分叠加使5#铺装得分54.61，桥面铺装部件PCCI=55.39，桥面系BDCI=66.92（3类）。因铺装为非主要部件，未触发4.1.8，但已是全桥最低分部件。"
+        },
+        {
+          "seq": 2,
+          "disease": "2-5#板、4-1#板、4-5#板裂缝+剥落露筋",
+          "part": "上部承重构件",
+          "indicator": "裂缝DP=25；剥落露筋DP=20；构件得分64.39",
+          "path": "裂缝按普通RC简支梁缝宽≤0.25mm取S_init=2，校准后S_opt=2、M_opt=4、DP=25；剥落露筋S_opt=2、M_opt=3、DP=20。多组扣分使构件得分降至64.39，拉低上部承重部件至82.99，但仍为2类。"
+        },
+        {
+          "seq": 3,
+          "disease": "5-5#板裂缝+局部渗水析白",
+          "part": "上部承重构件",
+          "indicator": "裂缝DP=25；构件得分75.00",
+          "path": "横向+竖向裂缝42条，最大缝宽0.18mm，未超限；渗水析白提示可能存在铰缝渗水/单板受力初期征兆，需重点监测。"
+        },
+        {
+          "seq": 4,
+          "disease": "铰缝渗水（5-2#、5-3#）",
+          "part": "上部一般构件",
+          "indicator": "DP=20；构件得分80.00",
+          "path": "铰缝渗水与5#铺装纵向裂缝并存，构成M1单板受力早期证据链，但无错台和动态异常，暂未形成结构安全问题。"
+        }
+      ]
+    }
+  }
+}
