@@ -3,7 +3,7 @@
 **Bridge Intelligent Diagnosis System, Mechanism-Constrained**
 面向桥梁技术状况评定的机理约束 LLM 推理框架——本仓库同时包含论文方法论对应的**核心提示词材料**（`system_prompts/`）和一套**可直接运行的桌面演示应用**（前端页面 + FastAPI 后端）。
 
-> **Note for non-Chinese-speaking readers**: The live interface (`index.html`) uses Chinese as the primary language for its static labels/buttons — matching its target users, Chinese highway bridge inspection engineers working under the JTG/T H21-2011 standard — with an English gloss shown inline next to each core control, plus an English `title` tooltip on hover. Runtime status and error messages are in English. A step-by-step English walkthrough is provided below under **"Quick Start (English)"**. The scientific artifact itself — prompt logic and knowledge base — lives in `system_prompts/`; their structural headers (S0–S7, paper-section cross-references) are in English, but the regulatory content itself (JTG/T H21-2011 provisions, defect tables) remains in Chinese, consistent with the standard being cited.
+> **Note for non-Chinese-speaking readers**: The live interface (`index.html`) uses Chinese as the primary language for its static labels/buttons — matching its target users, Chinese highway bridge inspection engineers working under the JTG/T H21-2011 standard — with an English gloss shown inline next to each core control, plus an English `title` tooltip on hover. Runtime status and error messages are in English. A step-by-step English walkthrough is provided below under **"Quick Start (English)"**. The scientific artifact itself — prompt logic and knowledge base — lives in `system_prompts/`; the content there is primarily in Chinese (including the section headings, e.g. "S0 数据清洗与完整性校验"), consistent with the JTG/T H21-2011 standard being cited. Each step is however tagged with a short cross-reference back to the paper's original English section names (e.g. *"对应论文 Section 2.4.1 Specification Layer"*), so the mapping to the paper can be traced without reading Chinese.
 
 ## 两种使用方式
 
@@ -28,10 +28,20 @@ BIDS-MC 完整流程分两步,前后端配合完成:
 ├── launcher.py                # 一键启动:起服务并自动打开浏览器
 ├── requirements.txt
 ├── .gitignore                # 排除 build/、dist/、__pycache__ 等打包产物（不提交二进制到仓库，见下）
-└── system_prompts/           # 论文方法论对应的核心材料
-    ├── reasoning_pipeline_prompt.md    # 推理链逻辑（S0-S7，逐节标注对应论文 Section）
-    ├── knowledge_base_JTG_T_H21.md     # 规范知识库（JTG/T H21-2011 条文与病害图解手册）
-    └── case_jiangdongao_bridge.md      # 脱敏后的案例数据（已去除路线名/桩号/检测单位）
+├── system_prompts/           # 论文方法论对应的核心材料
+│   ├── README.md
+│   ├── reasoning_pipeline_prompt.md    # 推理链逻辑（S0-S7，逐节标注对应论文 Section）
+│   ├── knowledge_base_JTG_T_H21.md     # 规范知识库（JTG/T H21-2011 条文与病害图解手册）
+│   └── case_jiangdongao_bridge.md      # 脱敏后的案例数据（已去除路线名/桩号/检测单位）
+└── example_output/           # 针对 case_jiangdongao_bridge.md 示例输入的实际运行输出（供复现核对）
+    ├── example_reasoning_output.md     # 推理阶段完整输出文本（含思考过程）
+    ├── example_result.json             # 提取阶段生成的结构化 JSON 结果
+    └── screenshots/                    # 应用界面截图
+        ├── interface_01.png
+        ├── interface_02.png
+        ├── interface_03.png
+        ├── interface_04.png
+        └── interface_05.png
 ```
 
 ## 从源码运行
@@ -76,9 +86,15 @@ python main.py
 | 规范层 Specification | S0 – S1 | 数据清洗、构件台账建立、病害归属校验、依规范表格确定初步标度 |
 | 机理层 Mechanism | S2.1 – S2.2 | 发展趋势判断、病害机理模式匹配（M1–M8）、结构安全风险定级 |
 | 优化层 Optimization | S2.3 – S2.4 | 基于风险等级与发展趋势对标度进行有约束的校准（趋势修正） |
-| 判断层 Judgment | S3 – S7 | 构件/部件/结构部位递归评分、全桥定级、关键病害影响分析与养护决策 |
+| 判断层 Judgment | S3 – S6 | 构件/部件/结构部位递归评分、全桥定级 |
+
+`S7`（关键病害影响分析与养护决策）对应论文 Section 2.5 Output Stage，不属于 2.4 节四层框架本身，是四层推理完成后的输出阶段。
 
 两个文件在实际调用大模型时**拼接注入同一个 system prompt**（见 `prompts.py`）：`knowledge_base_JTG_T_H21.md` 提供推理所依据的规范原文与病害判据数据，`reasoning_pipeline_prompt.md` 提供强制性的分步推理逻辑与格式约束。`reasoning_pipeline_prompt.md` 每个 S0–S7 章节标题下都标注了对应论文 Section，方便逐条核对。
+
+`example_output/` 下提供了针对 `system_prompts/case_jiangdongao_bridge.md` 这份示例输入的实际运行结果——`example_reasoning_output.md`（完整推理过程文本）与 `example_result.json`（提取阶段生成的结构化 JSON），供核对提示词实际输出效果；`screenshots/` 下是应用界面截图。
+
+![界面截图](example_output/screenshots/interface_01.png)
 
 ## 复现说明
 
@@ -90,8 +106,7 @@ python main.py
 ## 版本与引用
 
 - 提示词版本对应论文投稿版本，推理链结构与论文 Section 2.4 Analysis Stage 的四层框架一一对应。
-- 使用本材料开展研究时，请引用对应论文；引用格式将在论文正式发表后补充于此。
-- 许可条款将随论文录用状态确定后一并公布。知识库中摘录的规范条文（JTG/T H21-2011 及配套规程）版权归其发布/编制机构所有，本仓库仅摘录用于学术复现与同行评审目的。
+- 知识库中摘录的规范条文（JTG/T H21-2011 及配套规程）版权归其发布/编制机构所有，本仓库仅摘录用于学术复现与同行评审目的。
 
 ---
 
