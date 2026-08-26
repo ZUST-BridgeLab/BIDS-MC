@@ -1,5 +1,7 @@
 # system_prompts/
 
+> **For non-Chinese-speaking readers**: this folder's content is primarily in Chinese, consistent with the JTG/T H21-2011 standard it implements. See the root [`README.md`](../README.md) for an English overview, cross-references to the paper's section numbers, and a Quick Start guide.
+
 本目录是 BIDS-MC 论文方法论对应的核心材料，完整说明（四层框架对应表、许可与引用信息）见仓库根目录 [`README.md`](../README.md)。这里只补充"脱离本应用、单独使用这些文件"时需要知道的信息。
 
 ## 文件说明
